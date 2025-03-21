@@ -7,7 +7,6 @@ import quartztop.analitics.models.organizationData.Organization;
 import quartztop.analitics.repositories.organizationData.OrganizationRepository;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +16,7 @@ public class OrganizationCRUDService {
     public Organization createOreUpdate(OrganizationDTO organizationDTO) {
 
         Organization organization = mapToEntity(organizationDTO);
-        organizationRepository.save(organization);
+        return organizationRepository.save(organization);
     }
 
     public Optional<Organization> getOptionalEntity(OrganizationDTO organizationDTO) {

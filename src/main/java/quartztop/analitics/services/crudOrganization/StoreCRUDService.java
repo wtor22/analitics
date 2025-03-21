@@ -14,7 +14,7 @@ public class StoreCRUDService {
     private final StoreRepository storeRepository;
 
     public StoreEntity create(StoreDto storeDto) {
-        storeRepository.save(mapToEntity(storeDto));
+        return storeRepository.save(mapToEntity(storeDto));
     }
     public Optional<StoreEntity> getOptionalEntity(StoreDto storeDto) {
         return storeRepository.findById(storeDto.getId());
