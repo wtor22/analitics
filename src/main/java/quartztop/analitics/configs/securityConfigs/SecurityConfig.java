@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -22,45 +23,41 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                //.csrf(withDefaults())
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/login","/logout") // Отключаем CSRF для /login
-                )
-                .authorizeHttpRequests(authorizeRequests ->
-                        authorizeRequests
-                                .requestMatchers("/","/registration/**","/registration","/password-reset/**","/403","/error/**","/fonts/**","/images/**","/css/**", "/js/**", "/api/**",
-                                        "/order/**", "/users/export","/login","/logout", "/first-registration","/link-registration").permitAll()
-                                .anyRequest().authenticated()
-                )
-                .formLogin(form -> form
-                        .loginProcessingUrl("/login")
-                        .failureHandler(new CustomAuthenticationFailureHandler())
-                        .permitAll()
-                        .successHandler(customAuthenticationSuccessHandler)
-                )
-                .userDetailsService(customUserDetailsService)
-                .logout(logout ->
-                        logout
-                                .logoutUrl("/logout")  // URL для logout
-                                .logoutSuccessUrl("/")  // URL после успешного logout
-                                .invalidateHttpSession(true)  // Инвалидируем сессию
-                                .deleteCookies("JSESSIONID")  // Удаляем cookies
-                                .permitAll()
-                )
-                .exceptionHandling(exceptionHandling ->
-                        exceptionHandling
-                                .authenticationEntryPoint((request, response, authException) -> {
-                                    // Редирект на 403 для неавторизованных пользователей
-                                    response.sendRedirect("/403");
-                                })
-                                .accessDeniedPage("/403") // для авторизованных, но без прав
-                );
-        return http.build();
-    }
-
-
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http
+//                .csrf(csrf -> csrf
+//                        .ignoringRequestMatchers("/login","/logout") // Отключаем CSRF для /login
+//                )
+//                .authorizeHttpRequests(authorizeRequests ->
+//                        authorizeRequests
+//                                .requestMatchers("/","/registration/**","/registration","/password-reset/**","/403","/error/**","/fonts/**","/images/**","/css/**", "/js/**", "/api/**",
+//                                        "/order/**", "/users/export","/login","/logout", "/first-registration","/link-registration").permitAll()
+//                                .anyRequest().authenticated()
+//                )
+//                .formLogin(form -> form
+//                        .loginProcessingUrl("/login")
+//                        .failureHandler(new CustomAuthenticationFailureHandler())
+//                        .permitAll()
+//                        .successHandler(customAuthenticationSuccessHandler)
+//                )
+//                .userDetailsService(customUserDetailsService)
+//                .logout(logout ->
+//                        logout
+//                                .logoutUrl("/logout")  // URL для logout
+//                                .logoutSuccessUrl("/")  // URL после успешного logout
+//                                .invalidateHttpSession(true)  // Инвалидируем сессию
+//                                .deleteCookies("JSESSIONID")  // Удаляем cookies
+//                                .permitAll()
+//                )
+//                .exceptionHandling(exceptionHandling ->
+//                        exceptionHandling
+//                                .authenticationEntryPoint((request, response, authException) -> {
+//                                    // Редирект на 403 для неавторизованных пользователей
+//                                    response.sendRedirect("/403");
+//                                })
+//                                .accessDeniedPage("/403") // для авторизованных, но без прав
+//                );
+//        return http.build();
+//    }
 }

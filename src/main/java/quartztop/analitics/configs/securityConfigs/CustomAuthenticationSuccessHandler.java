@@ -18,7 +18,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
-        log.info("Successfully authentication: {}", authentication.getName());
+        //log.info("Successfully authentication: {}", authentication.getName());
 
         // TODO назначить редиректы попозже
 
