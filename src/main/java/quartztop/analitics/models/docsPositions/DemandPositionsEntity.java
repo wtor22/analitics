@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import quartztop.analitics.models.docs.DemandEntity;
-import quartztop.analitics.models.products.Bundles;
+import quartztop.analitics.models.products.BundleEntity;
 import quartztop.analitics.models.products.ProductsEntity;
 
 import java.util.UUID;
@@ -34,6 +34,6 @@ public class DemandPositionsEntity {
 
     @ManyToOne
     @JoinColumn(name = "bundle_id")
-    private Bundles bundle;
+    private BundleEntity bundle;
 
 }

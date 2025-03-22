@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table(name = "countries")
-public class Countries {
+public class CountriesEntity {
 
     @Id
     private UUID id; //  внешний id из API

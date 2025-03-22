@@ -55,11 +55,6 @@ public class DemandEntity {
     @JoinColumn(name = "contract_id")
     private ContractEntity contractEntity;
 
-    // Удаляю связанные позиции при удалении отгрузки
-    @OneToMany(mappedBy = "demandEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<DemandPositionsEntity> demandPositionsEntityList = new ArrayList<>();
-
-
     @ManyToMany
     @JoinTable(
             name = "demands_invoices", // Название промежуточной таблицы
@@ -67,4 +62,15 @@ public class DemandEntity {
             inverseJoinColumns = @JoinColumn(name = "invoice_id") // Связь с таблицей товаров
     )
     private List<InvoiceOutEntity> invoiceOutEntityList = new ArrayList<>();
+
+    // Удаляю связанные позиции при удалении отгрузки
+    @OneToMany(mappedBy = "demandEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<DemandPositionsEntity> demandPositionsEntityList = new ArrayList<>();
+
+    public void addPosition(DemandPositionsEntity position) {
+        if (!demandPositionsEntityList.contains(position)) {
+            demandPositionsEntityList.add(position);
+            position.setDemandEntity(this);
+        }
+    }
 }

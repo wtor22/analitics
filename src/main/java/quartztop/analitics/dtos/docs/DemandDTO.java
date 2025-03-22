@@ -3,11 +3,11 @@ package quartztop.analitics.dtos.docs;
 import lombok.Data;
 import quartztop.analitics.dtos.counterparty.AgentDTO;
 import quartztop.analitics.dtos.counterparty.ContractDTO;
+import quartztop.analitics.dtos.docsPositions.DemandPositionsDTO;
 import quartztop.analitics.dtos.organizationData.OrganizationDTO;
 import quartztop.analitics.dtos.organizationData.OwnerDTO;
 import quartztop.analitics.dtos.organizationData.StoreDto;
 import quartztop.analitics.models.docs.InvoiceOutEntity;
-import quartztop.analitics.models.docsPositions.DemandPositionsEntity;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,7 +32,7 @@ public class DemandDTO {
     private OwnerDTO owner;
     private AgentDTO agent;
     private ContractDTO contract;
-    private List<DemandPositionsEntity> demandPositionsEntityList;
+    private List<DemandPositionsDTO> demandPositionsDTOList;
     private List<InvoiceOutEntity> invoiceOutEntityList;
 
 }

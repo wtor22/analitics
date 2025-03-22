@@ -3,7 +3,7 @@ package quartztop.analitics.models.products;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import quartztop.analitics.models.organizationData.Countries;
+import quartztop.analitics.models.organizationData.CountriesEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table(name = "bundles")
-public class Bundles {
+public class BundleEntity {
 
     @Id
     private UUID id; //  внешний id из API
@@ -34,5 +34,5 @@ public class Bundles {
 
     @ManyToOne
     @JoinColumn(name = "country_id", referencedColumnName = "id")
-    private Countries countries;
+    private CountriesEntity countries;
 }

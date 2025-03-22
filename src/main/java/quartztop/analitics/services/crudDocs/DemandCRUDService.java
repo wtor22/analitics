@@ -19,6 +19,7 @@ import quartztop.analitics.models.organizationData.StoreEntity;
 import quartztop.analitics.repositories.docs.DemandRepository;
 import quartztop.analitics.services.counterparty.AgentCRUDService;
 import quartztop.analitics.services.counterparty.ContractCRUDService;
+import quartztop.analitics.services.crudDemandPositions.DemandPositionCRUDService;
 import quartztop.analitics.services.crudOrganization.OrganizationCRUDService;
 import quartztop.analitics.services.crudOrganization.OwnerCRUDService;
 import quartztop.analitics.services.crudOrganization.StoreCRUDService;
@@ -36,7 +37,6 @@ public class DemandCRUDService {
     private final OwnerCRUDService ownerCRUDService;
     private final ContractCRUDService contractCRUDService;
 
-
     @Transactional
     public void create(DemandDTO demandDTO) {
 
@@ -47,8 +47,17 @@ public class DemandCRUDService {
         setAgent(demandEntity,demandDTO.getAgent());
         setOwner(demandEntity,demandDTO.getOwner());
         setContract(demandEntity,demandDTO.getContract());
+
+        // Добавляю позиции
+        demandDTO.getDemandPositionsDTOList()
+                .stream()
+                .map(DemandPositionCRUDService::mapToEntity)
+                .forEach(demandEntity::addPosition);
+
         demandRepository.save(demandEntity);
     }
+
+
 
     private void setOrganization(DemandEntity demandEntity, OrganizationDTO organizationDTO) {
         Optional<Organization> optionalOrganization = organizationCRUDService.getOptionalEntity(organizationDTO);
@@ -62,7 +71,7 @@ public class DemandCRUDService {
         }
     }
 
-    public void setStore(DemandEntity demandEntity, StoreDto storeDto) {
+    private void setStore(DemandEntity demandEntity, StoreDto storeDto) {
 
         Optional<StoreEntity> optionalStoreEntity = storeCRUDService.getOptionalEntity(storeDto);
         if (optionalStoreEntity.isEmpty()) {
@@ -73,7 +82,7 @@ public class DemandCRUDService {
         } else demandEntity.setStoreEntity(optionalStoreEntity.get());
     }
 
-    public void setAgent(DemandEntity demandEntity, AgentDTO agentDTO) {
+    private void setAgent(DemandEntity demandEntity, AgentDTO agentDTO) {
         Optional<AgentEntity> optionalAgentEntity = agentCRUDService.getOptionalEntity(agentDTO);
         if (optionalAgentEntity.isEmpty()) {
             log.info("Agent {} NOT FOUND", agentDTO.getName());
@@ -85,7 +94,7 @@ public class DemandCRUDService {
         }
     }
 
-    public void setOwner(DemandEntity demandEntity, OwnerDTO ownerDTO) {
+    private void setOwner(DemandEntity demandEntity, OwnerDTO ownerDTO) {
         Optional<OwnerEntity> optionalOwnerEntity = ownerCRUDService.getOptionalEntity(ownerDTO);
         if (optionalOwnerEntity.isEmpty()) {
             log.info("Owner {} NOT FOUND", ownerDTO.getUid());
@@ -96,7 +105,7 @@ public class DemandCRUDService {
         }
     }
 
-    public void setContract(DemandEntity demandEntity, ContractDTO contractDTO) {
+    private void setContract(DemandEntity demandEntity, ContractDTO contractDTO) {
 
         Optional<ContractEntity> optionalContractDTO = contractCRUDService.getOptionalEntity(contractDTO);
         if (optionalContractDTO.isEmpty()) {
@@ -104,7 +113,6 @@ public class DemandCRUDService {
             ContractEntity contract = contractCRUDService.create(contractDTO);
             log.info("Contract {} FROM {} was created", contract.getName(), contract.getMoment());
         }
-
     }
 
     public static DemandDTO mapToDTO(DemandEntity demand) {

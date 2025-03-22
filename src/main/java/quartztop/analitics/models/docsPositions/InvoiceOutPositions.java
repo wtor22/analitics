@@ -3,9 +3,8 @@ package quartztop.analitics.models.docsPositions;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import quartztop.analitics.models.docs.DemandEntity;
 import quartztop.analitics.models.docs.InvoiceOutEntity;
-import quartztop.analitics.models.products.Bundles;
+import quartztop.analitics.models.products.BundleEntity;
 import quartztop.analitics.models.products.ProductsEntity;
 
 import java.util.UUID;
@@ -35,5 +34,5 @@ public class InvoiceOutPositions {
 
     @ManyToOne
     @JoinColumn(name = "bundle_id")
-    private Bundles bundle;
+    private BundleEntity bundle;
 }
