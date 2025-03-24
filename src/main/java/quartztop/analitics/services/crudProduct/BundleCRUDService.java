@@ -12,6 +12,7 @@ import quartztop.analitics.models.products.ProductsEntity;
 import quartztop.analitics.repositories.product.BundleRepository;
 import quartztop.analitics.services.crudOrganization.CountriesCRUDService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,16 +22,19 @@ import java.util.Optional;
 public class BundleCRUDService {
 
     private final BundleRepository bundleRepository;
+    private final ProductCRUDService productCRUDService;
     private final CountriesCRUDService countriesCRUDService;
 
     public BundleEntity create(BundleDTO bundleDTO) {
         BundleEntity bundleEntity = mapToEntity(bundleDTO);
-        if (bundleDTO.getCountriesDTO() != null ) {
-            setCountry(bundleEntity, bundleDTO.getCountriesDTO());
+        if (bundleDTO.getCountry() != null ) {
+            setCountry(bundleEntity, bundleDTO.getCountry());
         } else {
             log.error("Country FOR product {} IS NULL", bundleDTO.getArticle());
         }
-        if (!bundleDTO.getProductDTOList().isEmpty()) setListProducts(bundleEntity, bundleDTO.getProductDTOList());
+        if (!bundleDTO.getProductDTOList().isEmpty()) {
+            setListProducts(bundleEntity, bundleDTO.getProductDTOList());
+        }
         return bundleRepository.save(bundleEntity);
     }
     public Optional<BundleEntity> getOptionalEntity(BundleDTO bundleDTO) {
@@ -39,7 +43,17 @@ public class BundleCRUDService {
 
     private void setListProducts(BundleEntity bundleEntity, List<ProductDTO> productDTOList) {
 
-        List<ProductsEntity> productsEntityList = productDTOList.stream().map(ProductCRUDService::mapToEntity).toList();
+        List<ProductsEntity> productsEntityList = new ArrayList<>(2);
+        for(ProductDTO productDTO: productDTOList) {
+
+            Optional<ProductsEntity> optionalProductsEntity = productCRUDService.getOptionalEntity(productDTO);
+            if (optionalProductsEntity.isEmpty()) {
+                productsEntityList.add(productCRUDService.create(productDTO));
+            } else {
+                productsEntityList.add(optionalProductsEntity.get());
+            }
+        }
+
         bundleEntity.setProductsList(productsEntityList);
     }
 

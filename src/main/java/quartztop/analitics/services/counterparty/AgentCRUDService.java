@@ -34,7 +34,7 @@ public class AgentCRUDService {
     public void setOwner(AgentEntity agentEntity, OwnerDTO ownerDTO) {
         Optional<OwnerEntity> optionalOwnerEntity = ownerCRUDService.getOptionalEntity(ownerDTO);
         if(optionalOwnerEntity.isEmpty()) {
-            log.error("Owner {} NOT FOUND", ownerDTO.getFullName());
+            log.info("Owner {} NOT FOUND", ownerDTO.getFullName());
             OwnerEntity ownerEntity = ownerCRUDService.create(ownerDTO);
             log.info("Owner {} was created", ownerEntity.getFullName());
             agentEntity.setOwnerEntity(ownerEntity);

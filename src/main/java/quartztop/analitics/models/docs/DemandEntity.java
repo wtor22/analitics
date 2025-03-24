@@ -65,7 +65,7 @@ public class DemandEntity {
 
     // Удаляю связанные позиции при удалении отгрузки
     @OneToMany(mappedBy = "demandEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<DemandPositionsEntity> demandPositionsEntityList = new ArrayList<>();
+    private List<DemandPositionsEntity> demandPositionsEntityList;
 
     public void addPosition(DemandPositionsEntity position) {
         if (!demandPositionsEntityList.contains(position)) {

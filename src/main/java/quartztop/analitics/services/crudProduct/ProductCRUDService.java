@@ -11,6 +11,7 @@ import quartztop.analitics.repositories.product.ProductRepository;
 import quartztop.analitics.services.crudOrganization.CountriesCRUDService;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,8 +25,8 @@ public class ProductCRUDService {
 
         ProductsEntity productsEntity = mapToEntity(productDTO);
 
-        if (productDTO.getCountriesDTO() != null ) {
-            setCountry(productsEntity, productDTO.getCountriesDTO());
+        if (productDTO.getCountry() != null ) {
+            setCountry(productsEntity, productDTO.getCountry());
         } else {
             log.error("Country FOR product {} IS NULL", productDTO.getArticle());
         }
@@ -34,6 +35,11 @@ public class ProductCRUDService {
 
     public Optional<ProductsEntity> getOptionalEntity(ProductDTO productDTO) {
         return productRepository.findById(productDTO.getId());
+    }
+    public ProductDTO getProductDto(UUID id) {
+        Optional<ProductsEntity> optionalProductsEntity = productRepository.findById(id);
+        return optionalProductsEntity.map(ProductCRUDService::mapToDTO).orElse(null);
+
     }
 
     private void setCountry(ProductsEntity productsEntity, CountriesDTO countriesDTO) {

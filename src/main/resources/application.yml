@@ -1,6 +1,8 @@
 server:
   port: 8080
 spring:
+  profiles:
+    active: dev
   datasource:
     url: jdbc:postgresql://localhost:5432/analytics_qt
     username: qt_analytics
@@ -8,7 +10,7 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate.ddl-auto: create
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
@@ -16,20 +18,7 @@ spring:
     prefix: classpath:/templates/
     suffix: .html
     cache: false
-init-setting:
-  usersRoles:
-    - role: ROLE_ADMIN
-      nameRole: Администратор
-  usersInitList:
-    - name: Владимир
-      surName: Вячеславович
-      lastNName: Вторушин
-      email: wtorushin@yandex.ru
-      password: 1111
-      role: ROLE_ADMIN
-    - name: Полина
-      surName: Анатольевна
-      lastNName: Закамская
-      email: p.zakam@quartztop.ru
-      password: 1111
-      role: ROLE_ADMIN
+
+app:
+  integration:
+    base-url: https://api.moysklad.ru/api/remap/1.2/entity/

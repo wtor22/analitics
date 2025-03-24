@@ -10,7 +10,6 @@ import quartztop.analitics.models.docsPositions.DemandPositionsEntity;
 import quartztop.analitics.models.products.BundleEntity;
 import quartztop.analitics.models.products.ProductsEntity;
 import quartztop.analitics.repositories.docsPositions.DemandPositionsRepository;
-import quartztop.analitics.services.crudDocs.DemandCRUDService;
 import quartztop.analitics.services.crudProduct.BundleCRUDService;
 import quartztop.analitics.services.crudProduct.ProductCRUDService;
 
@@ -24,10 +23,14 @@ public class DemandPositionCRUDService {
     private final DemandPositionsRepository demandPositionsRepository;
     private final ProductCRUDService productCRUDService;
     private final BundleCRUDService bundleCRUDService;
-    private final DemandCRUDService demandCRUDService;
 
     public DemandPositionsEntity create(DemandPositionsDTO demandPositionsDTO) {
         DemandPositionsEntity demandPositionsEntity = mapToEntity(demandPositionsDTO);
+
+        Object assortment = demandPositionsDTO.getAssortment();
+        if(assortment instanceof ProductDTO) demandPositionsDTO.setProductDTO((ProductDTO) assortment);
+        if(assortment instanceof BundleDTO) demandPositionsDTO.setBundle((BundleDTO) assortment);
+
         if (demandPositionsDTO.getProductDTO() != null) setProduct(demandPositionsEntity, demandPositionsDTO.getProductDTO());
         if (demandPositionsDTO.getBundle() != null) setBundle(demandPositionsEntity, demandPositionsDTO.getBundle());
 
@@ -60,20 +63,21 @@ public class DemandPositionCRUDService {
 
 
     public static DemandPositionsEntity mapToEntity(DemandPositionsDTO demandPosition) {
-
+        //log.info("START MAPTOENTITY FOR " + demandPosition);
         DemandPositionsEntity demandPositionsEntity = new DemandPositionsEntity();
         demandPositionsEntity.setId(demandPosition.getId());
-        demandPositionsEntity.setSum(demandPosition.getSum());
+        demandPositionsEntity.setPrice(demandPosition.getPrice());
         demandPositionsEntity.setDiscount(demandPosition.getDiscount());
         demandPositionsEntity.setType(demandPosition.getType());
         demandPositionsEntity.setQuantity(demandPosition.getQuantity());
+
         return demandPositionsEntity;
     }
     public static DemandPositionsDTO mapToDTO(DemandPositionsEntity demandPosition) {
 
         DemandPositionsDTO demandPositionsDTO = new DemandPositionsDTO();
         demandPositionsDTO.setId(demandPosition.getId());
-        demandPositionsDTO.setSum(demandPosition.getSum());
+        demandPositionsDTO.setPrice(demandPosition.getPrice());
         demandPositionsDTO.setDiscount(demandPosition.getDiscount());
         demandPositionsDTO.setType(demandPosition.getType());
         demandPositionsDTO.setQuantity(demandPosition.getQuantity());

@@ -1,0 +1,26 @@
+package quartztop.analitics.dtos.products;
+
+
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.io.IOException;
+
+public class BundleDeserializer extends JsonDeserializer<Object> {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Override
+    public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
+        JsonNode node = jsonParser.getCodec().readTree(jsonParser);
+        // Игнорируем поле meta, работаем только с нужными полями
+        JsonNode metaNode = node.get("meta");
+        if (metaNode != null) {
+            ((ObjectNode) node).remove("meta");
+        }
+        return objectMapper.treeToValue(node, BundleDTO.class);
+    }
+}

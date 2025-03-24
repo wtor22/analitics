@@ -19,7 +19,7 @@ public class DemandPositionsEntity {
     private UUID id; //  внешний id из API
 
     private float quantity;
-    private int sum; // Сумма в копейках
+    private int price; // Сумма в копейках
     private float discount;
     @Column(name = "type_product")
     private String type;
