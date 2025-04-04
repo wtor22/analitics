@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml" xmlns="http://www.w3.org/1999/html" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>DashBoards</title>
+</head>
+<body>
+<!-- DashBoard для админа -->
+    <div th:fragment="FormCreateReportDemandByManagerAndTags" class="container">
+        <h3>Отчет по группам контрагентов</h3>
+
+        <form id="selectionForm">
+            <div class="d-flex flex-column">
+                <div class="d-flex flex-row">
+
+                    <div class="d-flex flex-row col-auto me-3 selector-date">
+                        <div class="me-2">
+                            <label for="date-current-start" class="ps-3">Период</label>
+                            <input type="date" class="form-control" id="date-current-start" required>
+                        </div>
+                        <div class="">
+                            <label for="date-current-end" class="ps-3"></label>
+                            <input type="date" class="form-control" id="date-current-end" required>
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-row col-auto me-4 selector-date">
+                        <div class="me-2">
+                            <label for="date-compare-start" class="ps-3">Для сравнения</label>
+                            <input type="date" class="form-control" id="date-compare-start" required>
+                        </div>
+                        <div class="">
+                            <label for="date-compare-end" class="ps-3"></label>
+                            <input type="date" class="form-control" id="date-compare-end" required>
+                        </div>
+                    </div>
+
+                    <div class="col-2 selector-date">
+                        <label for="manager" class="">Выберите менеджера:</label>
+                        <select id="manager" class="form-select" name="manager" required>
+                            <option value="">-- Выберите --</option>
+                        </select>
+                    </div>
+                    <div class="d-flex ms-auto align-items-center">
+                        <button id="download-btn" type="submit" class="btn btn-classic">
+                            <span id="spinner" class="spinner-border spinner-border-sm text-light d-none" role="status" aria-hidden="true"></span>
+                            Скачать EXEL
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="d-flex flex-column container" style="background: rgba(255,255,255,0.6);">
+                <div id="button-container" class="d-none">
+                    <button id="toggle-all" class="btn btn-light m-3">Снять все</button>
+                </div>
+                <div class="p-3">
+                    <h3>Группы контрагентов</h3>
+                        <div id="tags-container" class="form-check  d-flex flex-wrap">
+                            <p class="text-muted">Сначала выберите менеджера</p>
+                        </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</body>
+</html>

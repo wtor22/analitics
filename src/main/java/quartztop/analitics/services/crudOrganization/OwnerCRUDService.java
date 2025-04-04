@@ -6,7 +6,9 @@ import quartztop.analitics.dtos.organizationData.OwnerDTO;
 import quartztop.analitics.models.organizationData.OwnerEntity;
 import quartztop.analitics.repositories.organizationData.OwnerRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,9 +19,20 @@ public class OwnerCRUDService {
         OwnerEntity ownerEntity = mapToEntity(ownerDTO);
         return ownerRepository.save(ownerEntity);
     }
+    public List<OwnerDTO> getListOwnersDTO() {
+        List<OwnerEntity> ownerEntityList = ownerRepository.findAll();
+        return ownerEntityList.stream().map(OwnerCRUDService::mapToDTO).toList();
+    }
 
     public Optional<OwnerEntity> getOptionalEntity(OwnerDTO ownerDTO) {
         return ownerRepository.findById(ownerDTO.getId());
+    }
+    public OwnerDTO getOwnerDto(UUID id) {
+        Optional<OwnerEntity> optionalOwnerEntity = ownerRepository.findById(id);
+        return optionalOwnerEntity.map(OwnerCRUDService::mapToDTO).orElse(null);
+    }
+    public Optional<OwnerEntity> getOptionalEntity(UUID id) {
+        return ownerRepository.findById(id);
     }
 
     public static OwnerEntity mapToEntity(OwnerDTO owner) {

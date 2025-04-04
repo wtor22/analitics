@@ -24,15 +24,19 @@ public class BundleEntity {
     private String name;
     private String pathName; // Наименование группы, в которую входит Товар
 
-    @ManyToMany
-    @JoinTable(
-            name = "bundle_products", // Название промежуточной таблицы
-            joinColumns = @JoinColumn(name = "bundle_id"),  // Связь с таблицей комплектов
-            inverseJoinColumns = @JoinColumn(name = "product_id") // Связь с таблицей товаров
-    )
-    private List<ProductsEntity> productsList = new ArrayList<>();
+    @OneToMany(mappedBy = "bundle", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BundleProduct> bundleProducts = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "country_id", referencedColumnName = "id")
     private CountriesEntity countries;
+
+    // Добавляем метод для добавления продуктов
+    public void addProduct(ProductsEntity product, double quantity) {
+        BundleProduct bundleProduct = new BundleProduct();
+        bundleProduct.setBundle(this);
+        bundleProduct.setProduct(product);
+        bundleProduct.setQuantity(quantity);
+        this.bundleProducts.add(bundleProduct);
+    }
 }

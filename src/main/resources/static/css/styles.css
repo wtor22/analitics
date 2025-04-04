@@ -1,0 +1,41 @@
+.rubik-mono-one-regular {
+  font-family: "Rubik Mono One", monospace;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+.logo {
+    width: 400px;
+    margin: 30px;
+}
+.logo img {
+    width: 100%;
+}
+.logo h1 {
+    color: #999;
+    letter-spacing: 12px;
+    line-height: 0.85;
+    background: #635872;
+    padding: 3px 15px;
+    text-shadow: 1px 1px 1px aliceblue;
+}
+
+.selector-date {
+    background: #E7DDF3;
+    border-radius: 10px;
+    padding: 5px 15px 5px;
+    box-sizing: border-box;
+}
+#selectionForm {
+    background: #DFDFF4;
+    padding: 30px;
+    border-radius: 15px;
+}
+#selectionForm button.btn.btn-classic, #demands-updater button.btn.btn-classic{
+    background: #635872;
+    color: #fff;
+}
+#selectionForm label.btn{
+    padding: 2px 8px;
+}

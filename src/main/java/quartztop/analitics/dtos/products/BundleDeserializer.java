@@ -16,7 +16,7 @@ public class BundleDeserializer extends JsonDeserializer<Object> {
     @Override
     public Object deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JacksonException {
         JsonNode node = jsonParser.getCodec().readTree(jsonParser);
-        // Игнорируем поле meta, работаем только с нужными полями
+        // Игнорируем поле meta
         JsonNode metaNode = node.get("meta");
         if (metaNode != null) {
             ((ObjectNode) node).remove("meta");

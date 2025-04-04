@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Настройки</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/settings.js}"></script>
+</head>
+<body>
+<div th:insert="~{fragments/fragments :: logo}" class="position-logo"></div>
+
+
+    <div class="container">
+        <H1 class="mb-5">Настройки программы. <br/><span style="color:red; font-weight: bold;">СЮДА НЕ ЛЕЗТЬ</span></H1>
+
+        <form id="demands-updater">
+            <div class="d-flex flex-column">
+                <h3 >Загрузить отгрузки за период</h3>
+                <div class="d-flex flex-row">
+
+                    <div class="d-flex flex-row col-auto me-3 selector-date">
+                        <div class="me-2">
+                            <label for="date-demand-start" class="ps-3">Период c</label>
+                            <input type="date" class="form-control" id="date-demand-start" name="start">
+                        </div>
+                        <div class="">
+                            <label for="date-demand-end" class="ps-3">Период по</label>
+                            <input type="date" class="form-control" id="date-demand-end" name="end">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-classic m-4">ЗАГРУЗИТЬ</button>
+            <span id="demands-updater-response" class="d-none" style="color: red;"></span>
+        </form>
+    </div>
+</body>
+</html>

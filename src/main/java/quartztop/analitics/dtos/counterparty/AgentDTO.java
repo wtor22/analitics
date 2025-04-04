@@ -17,6 +17,6 @@ public class AgentDTO {
     private String legalLastName; // Для физ лиц
     private String legalMiddleName; // Для физ лиц
     private String legalTitle; // Для юр лиц
-
+    private String[] tags; // Назначенные группы контрагента в МС
     private OwnerDTO owner;
 }

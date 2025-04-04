@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Fragments</title>
+</head>
+<body>
+
+    <!-- LOGO -->
+    <div th:fragment="logo" >
+        <div class="d-flex flex-column flex-xl-row justify-content-between top-panel">
+            <div class="logo">
+                <a th:href="@{/}">
+                    <img th:src="@{/images/logo.svg}" alt="Company Logo">
+                </a>
+                <h1 class="rubik-mono-one-regular">analytics</h1>
+            </div>
+        </div>
+    </div>
+
+    <!-- FTTER -->
+    <div th:fragment="futter" >
+        <div class="d-flex flex-column flex-xl-row justify-content-between bottom-panel">
+            <div class="">
+                <a th:href="@{/settings}">Настройки</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

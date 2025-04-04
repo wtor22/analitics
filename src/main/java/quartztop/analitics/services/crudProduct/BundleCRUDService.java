@@ -3,6 +3,7 @@ package quartztop.analitics.services.crudProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import quartztop.analitics.dtos.organizationData.CountriesDTO;
 import quartztop.analitics.dtos.products.BundleDTO;
 import quartztop.analitics.dtos.products.ProductDTO;
@@ -25,6 +26,7 @@ public class BundleCRUDService {
     private final ProductCRUDService productCRUDService;
     private final CountriesCRUDService countriesCRUDService;
 
+    @Transactional
     public BundleEntity create(BundleDTO bundleDTO) {
         BundleEntity bundleEntity = mapToEntity(bundleDTO);
         if (bundleDTO.getCountry() != null ) {
@@ -35,6 +37,7 @@ public class BundleCRUDService {
         if (!bundleDTO.getProductDTOList().isEmpty()) {
             setListProducts(bundleEntity, bundleDTO.getProductDTOList());
         }
+
         return bundleRepository.save(bundleEntity);
     }
     public Optional<BundleEntity> getOptionalEntity(BundleDTO bundleDTO) {
@@ -42,19 +45,14 @@ public class BundleCRUDService {
     }
 
     private void setListProducts(BundleEntity bundleEntity, List<ProductDTO> productDTOList) {
-
-        List<ProductsEntity> productsEntityList = new ArrayList<>(2);
         for(ProductDTO productDTO: productDTOList) {
-
             Optional<ProductsEntity> optionalProductsEntity = productCRUDService.getOptionalEntity(productDTO);
             if (optionalProductsEntity.isEmpty()) {
-                productsEntityList.add(productCRUDService.create(productDTO));
+                bundleEntity.addProduct(productCRUDService.create(productDTO), productDTO.getQuantity());
             } else {
-                productsEntityList.add(optionalProductsEntity.get());
+                bundleEntity.addProduct(optionalProductsEntity.get(), productDTO.getQuantity());
             }
         }
-
-        bundleEntity.setProductsList(productsEntityList);
     }
 
     private void setCountry(BundleEntity bundleEntity, CountriesDTO countriesDTO) {

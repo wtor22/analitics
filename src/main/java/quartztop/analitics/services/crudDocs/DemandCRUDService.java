@@ -11,8 +11,6 @@ import quartztop.analitics.dtos.docsPositions.DemandPositionsDTO;
 import quartztop.analitics.dtos.organizationData.OrganizationDTO;
 import quartztop.analitics.dtos.organizationData.OwnerDTO;
 import quartztop.analitics.dtos.organizationData.StoreDto;
-import quartztop.analitics.dtos.products.BundleDTO;
-import quartztop.analitics.dtos.products.ProductDTO;
 import quartztop.analitics.models.counterparty.AgentEntity;
 import quartztop.analitics.models.counterparty.ContractEntity;
 import quartztop.analitics.models.docs.DemandEntity;
@@ -32,15 +30,14 @@ import quartztop.analitics.services.crudOrganization.StoreCRUDService;
 import quartztop.analitics.services.crudProduct.BundleCRUDService;
 import quartztop.analitics.services.crudProduct.ProductCRUDService;
 
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class DemandCRUDService {
     private final DemandRepository demandRepository;
-    private final DemandPositionCRUDService demandPositionCRUDService;
     private final OrganizationCRUDService organizationCRUDService;
     private final StoreCRUDService storeCRUDService;
     private final AgentCRUDService agentCRUDService;
@@ -65,6 +62,10 @@ public class DemandCRUDService {
         List<DemandPositionsEntity> demandPositionsEntityList = new ArrayList<>();
         List<DemandPositionsDTO> demandPositionsDTOList = demandDTO.getPositions().getRows();
         for(DemandPositionsDTO demandPositionsDTO: demandPositionsDTOList) {
+            if (demandPositionsDTO.getType() == null) {
+                log.info("TYPE DEMAND POSITION IS NULL");
+                continue;
+            }
             DemandPositionsEntity demandPositionsEntity = DemandPositionCRUDService.mapToEntity(demandPositionsDTO);
             if(demandPositionsDTO.getType().equals("product")) {
                 Optional<ProductsEntity> optionalProductsEntity = productCRUDService.getOptionalEntity(demandPositionsDTO.getProductDTO());
@@ -100,6 +101,9 @@ public class DemandCRUDService {
         }
         demandRepository.deleteById(id);
         log.info("Demand {} from {} was deleted", optionalDemandEntity.get().getName(), optionalDemandEntity.get().getMoment());
+    }
+    public LocalDateTime getMomentUpdateById(UUID id) {
+        return demandRepository.findMomentById(id);
     }
 
     private void setOrganization(DemandEntity demandEntity, OrganizationDTO organizationDTO) {

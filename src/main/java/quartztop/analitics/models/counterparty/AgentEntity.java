@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import quartztop.analitics.models.organizationData.OwnerEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -27,5 +29,13 @@ public class AgentEntity {
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private OwnerEntity ownerEntity;
+
+    @ManyToMany
+    @JoinTable(
+            name = "agent_tag", // Название промежуточной таблицы
+            joinColumns = @JoinColumn(name = "agent_id"),  // Связь с таблицей контрагентов
+            inverseJoinColumns = @JoinColumn(name = "group_id") // Связь с таблицей групп
+    )
+    private List<GroupAgentEntity> groupAgentEntityList = new ArrayList<>();
 
 }

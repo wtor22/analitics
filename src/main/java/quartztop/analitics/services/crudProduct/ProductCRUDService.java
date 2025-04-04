@@ -4,9 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import quartztop.analitics.dtos.organizationData.CountriesDTO;
+import quartztop.analitics.dtos.products.CategoryDTO;
 import quartztop.analitics.dtos.products.ProductDTO;
 import quartztop.analitics.models.organizationData.CountriesEntity;
+import quartztop.analitics.models.products.CategoryEntity;
 import quartztop.analitics.models.products.ProductsEntity;
+import quartztop.analitics.repositories.product.CategoryRepository;
 import quartztop.analitics.repositories.product.ProductRepository;
 import quartztop.analitics.services.crudOrganization.CountriesCRUDService;
 
@@ -19,6 +22,7 @@ import java.util.UUID;
 public class ProductCRUDService {
 
     private final ProductRepository productRepository;
+    private final CategoryCRUDService categoryCRUDService;
     private final CountriesCRUDService countriesCRUDService;
 
     public ProductsEntity create(ProductDTO productDTO) {
@@ -30,7 +34,24 @@ public class ProductCRUDService {
         } else {
             log.error("Country FOR product {} IS NULL", productDTO.getArticle());
         }
+
+        if (productDTO.getCategoryDTO() != null) {
+            setCategory(productsEntity, productDTO.getCategoryDTO());
+        } else {
+            log.error("Category FOR product {} IS NULL", productDTO.getArticle());
+        }
         return productRepository.save(productsEntity);
+    }
+
+    private void setCategory(ProductsEntity productsEntity, CategoryDTO categoryDTO) {
+        Optional<CategoryEntity> optionalCategoryEntity = categoryCRUDService.getOptionalEntity(categoryDTO);
+        if(optionalCategoryEntity.isEmpty()){
+            CategoryEntity categoryEntity = categoryCRUDService.create(categoryDTO);
+            productsEntity.setCategoryEntity(categoryEntity);
+            return;
+        }
+        productsEntity.setCategoryEntity(optionalCategoryEntity.get());
+
     }
 
     public Optional<ProductsEntity> getOptionalEntity(ProductDTO productDTO) {

@@ -28,7 +28,13 @@ public class ProductListDeserializer extends JsonDeserializer<List<ProductDTO>> 
                     String assortmentType = assortmentNode.get("meta").get("type").asText();
                     if ("product".equals(assortmentType)) {
                         ProductDTO productDTO = objectMapper.treeToValue(assortmentNode, ProductDTO.class);
+
+                        // Достаем quantity из rowNode
+                        double quantity = rowNode.has("quantity") ? rowNode.get("quantity").asDouble() : 0;
+                        productDTO.setQuantity(quantity);
+
                         productDTOList.add(productDTO);
+
                     }
                 }
             }

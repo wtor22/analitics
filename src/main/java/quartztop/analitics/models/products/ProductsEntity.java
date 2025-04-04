@@ -25,9 +25,13 @@ public class ProductsEntity {
     private String pathName; // Наименование группы, в которую входит Товар
 
     @ManyToOne
+    @JoinColumn(name = "category_id")
+    private CategoryEntity categoryEntity;
+
+    @ManyToOne
     @JoinColumn(name = "country_id", referencedColumnName = "id")
     private CountriesEntity countries;
 
-    @ManyToMany(mappedBy = "productsList") // Указываем, что связь уже описана в `Bundles`
-    private List<BundleEntity> bundlesList = new ArrayList<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BundleProduct> bundleProducts = new ArrayList<>();
 }
