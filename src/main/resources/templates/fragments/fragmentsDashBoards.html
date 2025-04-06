@@ -11,7 +11,7 @@
 
         <form id="selectionForm">
             <div class="d-flex flex-column">
-                <div class="d-flex flex-row">
+                <div class="d-flex flex-row flex-wrap">
 
                     <div class="d-flex flex-row col-auto me-3 selector-date">
                         <div class="me-2">
@@ -41,16 +41,43 @@
                             <option value="">-- Выберите --</option>
                         </select>
                     </div>
+
                     <div class="d-flex ms-auto align-items-center">
                         <button id="download-btn" type="submit" class="btn btn-classic">
                             <span id="spinner" class="spinner-border spinner-border-sm text-light d-none" role="status" aria-hidden="true"></span>
                             Скачать EXEL
                         </button>
                     </div>
+                    <div id="category-container" class="col-12 selector-date d-flex">
+                        <div th:each="groupEntry : ${groupedCategories}" class="col-auto">
+                            <div class="p-3">
+                                <h6 style="text-decoration: underline;" th:text="${groupEntry.key}"></h6>
+
+                                <div class="form-check" th:each="category : ${groupEntry.value}">
+                                    <input type="checkbox"
+                                           class="form-check-input check-category"
+                                           th:id="${category.id}"
+                                           th:name="selectedCategoryIds"
+                                           th:value="${category.id}"
+                                           th:checked="${category.usedInReports}"> <!-- если нужно предварительное выделение -->
+
+                                    <label class="form-check-label"
+                                           th:for="${category.id}"
+                                           th:text="${category.name}"></label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="m-auto">
+                            <div class="form-check-reverse form-switch">
+                                <input id="switchCheckChecked" class="form-check-input" style="margin-top: 6px;" type="checkbox" role="switch" >
+                                <label class="form-check-label" for="switchCheckChecked" style="text-decoration: underline; font-style: italic;">
+                                    Установить выбранные категории как выбор по&nbsp;умолчанию
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
             <div class="d-flex flex-column container" style="background: rgba(255,255,255,0.6);">
                 <div id="button-container" class="d-none">
                     <button id="toggle-all" class="btn btn-light m-3">Снять все</button>
@@ -65,5 +92,28 @@
 
         </form>
     </div>
+
+<!--    <div th:fragment="FormSetCategoriesIsUsedInReports">-->
+<!--        <div class="col-12 selector-date d-flex">-->
+<!--            <div th:each="groupEntry : ${groupedCategories}">-->
+<!--                <div class="p-3">-->
+<!--                    <h6 style="text-decoration: underline;" th:text="${groupEntry.key}"></h6>-->
+
+<!--                    <div class="form-check" th:each="category : ${groupEntry.value}">-->
+<!--                        <input type="checkbox"-->
+<!--                               class="form-check-input"-->
+<!--                               th:id="${'category-' + category.id}"-->
+<!--                               th:name="selectedCategoryIds"-->
+<!--                               th:value="${category.id}"-->
+<!--                               th:checked="${category.usedInReports}"> &lt;!&ndash; если нужно предварительное выделение &ndash;&gt;-->
+
+<!--                        <label class="form-check-label"-->
+<!--                               th:for="${'category-' + category.id}"-->
+<!--                               th:text="${category.name}"></label>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 </body>
 </html>

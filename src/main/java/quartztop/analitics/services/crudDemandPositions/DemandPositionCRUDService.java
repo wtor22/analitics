@@ -19,6 +19,7 @@ import quartztop.analitics.services.crudProduct.ProductCRUDService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -49,8 +50,8 @@ public class DemandPositionCRUDService {
         return demandPositionsRepository.getListUniqueCategoryEntity(periodStart, periodEnd, groupAgentEntity);
     }
 
-    public List<CategoryEntity> getListUniqueCategoryByPeriodAndAgent(LocalDateTime periodStart, LocalDateTime periodEnd, AgentEntity agent) {
-        return demandPositionsRepository.getListUniqueCategoryEntityByAgent(periodStart, periodEnd, agent);
+    public List<CategoryEntity> getListUniqueCategoryByPeriodAndAgent(LocalDateTime periodStart, LocalDateTime periodEnd, AgentEntity agent, List<UUID> listUUIDCategory) {
+        return demandPositionsRepository.getListUniqueCategoryEntityByAgent(periodStart, periodEnd, agent, listUUIDCategory);
     }
 
     public double getCountProductByPeriodAndAgentAndCategory(LocalDateTime periodStart, LocalDateTime periodEnd, CategoryEntity categoryEntity, AgentEntity agent) {

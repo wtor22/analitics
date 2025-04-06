@@ -8,8 +8,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import quartztop.analitics.dtos.products.BundleDTO;
+import quartztop.analitics.dtos.products.CategoryDTO;
 import quartztop.analitics.httpClient.OkHttpClientSender;
+import quartztop.analitics.services.crudProduct.CategoryCRUDService;
 
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -19,6 +23,7 @@ import java.util.UUID;
 public class ProductClientController {
 
     private final OkHttpClientSender httpClientSender;
+    private final CategoryCRUDService categoryCRUDService;
 
     // Ничего не сохраняет в БД. Чисто для теста
     @GetMapping("/bundle/{id}")
@@ -26,6 +31,11 @@ public class ProductClientController {
         log.info("GET BUNDLE REQUEST WITH ID " + id);
         BundleDTO bundleDTO = httpClientSender.getBundle(id);
         return ResponseEntity.ok(bundleDTO);
+    }
+
+    @GetMapping("/category")
+    public ResponseEntity<Map<String, List<CategoryDTO>>> getCategories() {
+        return ResponseEntity.ok(categoryCRUDService.getMapCategoryByPath());
     }
 
 }

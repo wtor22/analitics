@@ -1,5 +1,6 @@
 package quartztop.analitics.models.products;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -20,4 +21,6 @@ public class CategoryEntity {
     private String description;
     private String name;
     private String pathName;
+    @Column(name = "used_in_reports", nullable = true)
+    private boolean usedInReports;
 }

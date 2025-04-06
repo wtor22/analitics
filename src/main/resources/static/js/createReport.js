@@ -6,19 +6,16 @@ document.addEventListener("DOMContentLoaded", function () {
     const endCurrentDateInput = document.getElementById("date-current-end");
     const startCompareDateInput = document.getElementById("date-compare-start");
     const endCompareDateInput = document.getElementById("date-compare-end");
+    const switchCheckCheckedInput = document.getElementById('switchCheckChecked');
     const buttonContainer = document.getElementById('button-container');
 
-
     document.getElementById("toggle-all").addEventListener("click", function (event) {
-        event.preventDefault(); // Теперь всё будет работать корректно
-
+        event.preventDefault();
         const checkboxes = document.querySelectorAll("#tags-container input[type='checkbox']");
         const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
-
         checkboxes.forEach(checkbox => {
             checkbox.checked = !allChecked;
         });
-
         this.textContent = allChecked ? "Выбрать все" : "Снять все";
     });
 
@@ -86,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    // Загружаем менеджеров при старте
+    // Загружаем менеджеров и категории при старте
     loadManagers();
 
     // Обработчик выбора менеджера
@@ -104,6 +101,11 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("selectionForm").addEventListener("submit", function (event) {
         event.preventDefault();
 
+        const checkedInputs = document.querySelectorAll('#category-container .form-check-input.check-category:checked');
+        const selectedIds = Array.from(checkedInputs).map(input => input.id);
+        // Просто объединяем в строку с запятыми
+        const idsString = selectedIds.join(',');
+
         const downloadBtn = document.getElementById("download-btn");
         const spinner = document.getElementById("spinner");
 
@@ -116,12 +118,11 @@ document.addEventListener("DOMContentLoaded", function () {
         const startCompareDate = startCompareDateInput.value;
         const endCompareDate = endCompareDateInput.value;
 
+        //const switchCheckChecked = switchCheckCheckedInput.value;
+
         const selectedManager = managerSelect.value;
         const selectedTags = Array.from(tagsContainer.querySelectorAll("input[type='checkbox']:checked"))
                                  .map(checkbox => checkbox.value);
-
-        console.log("Выбранный менеджер:", selectedManager);
-        console.log("Выбранные теги:", selectedTags);
 
         // Формируем URL с параметрами
         const params = new URLSearchParams({
@@ -130,7 +131,9 @@ document.addEventListener("DOMContentLoaded", function () {
             startPeriod: startCurrentDate,
             endPeriod: endCurrentDate,
             comparisonPeriodStart: startCompareDate,
-            comparisonPeriodEnd: endCompareDate
+            comparisonPeriodEnd: endCompareDate,
+            isRememberCategorySelection: switchCheckCheckedInput.checked,
+            listUUIDCategory: idsString
         });
 
         fetch(`/api/v1/client/report/download?${params.toString()}`, {

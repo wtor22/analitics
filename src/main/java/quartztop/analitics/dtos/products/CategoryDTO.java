@@ -14,4 +14,5 @@ public class CategoryDTO {
     private String description;
     private String name;
     private String pathName;
+    private boolean usedInReports;
 }

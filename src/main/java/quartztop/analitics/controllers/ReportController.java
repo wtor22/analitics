@@ -23,6 +23,7 @@ import quartztop.analitics.reports.ReportService;
 import quartztop.analitics.services.counterparty.GroupAgentCRUDService;
 import quartztop.analitics.services.crudDemandPositions.DemandPositionCRUDService;
 import quartztop.analitics.services.crudOrganization.OwnerCRUDService;
+import quartztop.analitics.services.crudProduct.CategoryCRUDService;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.util.UUID;
 public class ReportController {
     private final ReportService reportService;
     private final OwnerCRUDService ownerCRUDService;
+    private final CategoryCRUDService categoryCRUDService;
 
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadReport(@RequestParam UUID managerId,
@@ -47,7 +49,9 @@ public class ReportController {
                                                    @RequestParam LocalDate startPeriod,
                                                    @RequestParam LocalDate endPeriod,
                                                    @RequestParam LocalDate comparisonPeriodStart,
-                                                   @RequestParam LocalDate comparisonPeriodEnd) {
+                                                   @RequestParam LocalDate comparisonPeriodEnd,
+                                                   @RequestParam List<UUID> listUUIDCategory,
+                                                   @RequestParam  boolean isRememberCategorySelection) {
 
 
         Optional<OwnerEntity> optionalOwnerEntity = ownerCRUDService.getOptionalEntity(managerId);
@@ -55,9 +59,14 @@ public class ReportController {
         String nameFile = "report-" + optionalOwnerEntity.get().getUid() + "|" + startPeriod + "-" + endPeriod;
         GeneralReportsDTO reportDto = reportService.createReportByGroupAgentsAndCategories(managerId, listIdTags,
                 startPeriod, endPeriod,
-                comparisonPeriodStart, comparisonPeriodEnd);
+                comparisonPeriodStart, comparisonPeriodEnd, listUUIDCategory);
 
         Workbook workbook = reportService.createExcelSheetReportOrders(reportDto);
+
+        if (isRememberCategorySelection) {
+            boolean isSetting = categoryCRUDService.setUsedInReport(listUUIDCategory);
+            if(isSetting) log.info("SET REMEMBER CATEGORY SUCCESSFULLY");
+        }
         Resource resource;
 
         try {
@@ -79,16 +88,15 @@ public class ReportController {
                                                                 @RequestParam LocalDate startPeriod,
                                                                 @RequestParam LocalDate endPeriod,
                                                                 @RequestParam LocalDate comparisonPeriodStart,
-                                                                @RequestParam LocalDate comparisonPeriodEnd) throws IOException {
+                                                                @RequestParam LocalDate comparisonPeriodEnd,
+                                                                @RequestParam List<UUID> listUUIDCategories)
+            throws IOException {
 
 
         GeneralReportsDTO generalReportsDTO = reportService.createReportByGroupAgentsAndCategories(managerId, listIdTags,
                 startPeriod, endPeriod,
-                comparisonPeriodStart, comparisonPeriodEnd);
+                comparisonPeriodStart, comparisonPeriodEnd, listUUIDCategories);
 
-
-        reportService.createReportByGroupAgentsAndCategories(
-                managerId,listIdTags, startPeriod,endPeriod,comparisonPeriodStart,comparisonPeriodEnd);
 
         return ResponseEntity.ok(generalReportsDTO);
     }

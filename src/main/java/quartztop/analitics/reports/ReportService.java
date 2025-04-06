@@ -37,11 +37,14 @@ public class ReportService {
 
     private final short indent = 1;
 
-    public GeneralReportsDTO createReportByGroupAgentsAndCategories( UUID managerId, List<Integer> listIdTags,
-                                                        LocalDate startPeriod, LocalDate endPeriod,
-                                                        LocalDate comparisonPeriodStart, LocalDate comparisonPeriodEnd)
+    public GeneralReportsDTO createReportByGroupAgentsAndCategories( UUID managerId,
+                                                                     List<Integer> listIdTags,
+                                                                     LocalDate startPeriod,
+                                                                     LocalDate endPeriod,
+                                                                     LocalDate comparisonPeriodStart,
+                                                                     LocalDate comparisonPeriodEnd,
+                                                                     List<UUID> listUUIDCategory)
     {
-
         LocalDateTime start = startPeriod.atStartOfDay();
         LocalDateTime end = endPeriod.atTime(23,59,59);
         LocalDateTime startCompare = comparisonPeriodStart.atStartOfDay();
@@ -76,8 +79,8 @@ public class ReportService {
             for(AgentEntity agent: listUniqueAgentByTag) {
 
                 // ПОЛУЧАЮ СET  КАТЕГОРИЙ
-                List<CategoryEntity> categoryEntities = demandPositionCRUDService.getListUniqueCategoryByPeriodAndAgent(start,end,agent);
-                List<CategoryEntity> comparePeriodCategoryEntities = demandPositionCRUDService.getListUniqueCategoryByPeriodAndAgent(startCompare,endCompare,agent);
+                List<CategoryEntity> categoryEntities = demandPositionCRUDService.getListUniqueCategoryByPeriodAndAgent(start,end,agent,listUUIDCategory);
+                List<CategoryEntity> comparePeriodCategoryEntities = demandPositionCRUDService.getListUniqueCategoryByPeriodAndAgent(startCompare,endCompare,agent,listUUIDCategory);
 
                 Set<CategoryEntity> setUniqueCategoryEntity = new HashSet<>(categoryEntities);
                 setUniqueCategoryEntity.addAll(comparePeriodCategoryEntities);
@@ -88,7 +91,6 @@ public class ReportService {
                 reportByAgentsDTO.setAgentDTO(agentDTO);
 
                 for(CategoryEntity categoryEntity: setUniqueCategoryEntity) {
-                    if (categoryEntity.getName().equals("Готовые изделия")) continue;
 
                     double count = demandPositionCRUDService.getCountProductByPeriodAndAgentAndCategory(start,end,categoryEntity,agent);
                     double comparePeriodCount = demandPositionCRUDService.getCountProductByPeriodAndAgentAndCategory(startCompare,endCompare,categoryEntity,agent);
@@ -134,7 +136,6 @@ public class ReportService {
             generalReportsDTO.setTotalCompareCount(generalReportsDTO.getTotalCompareCount() + reportByGroupAgentDTO.getCountComparePeriod());
 
         }
-        //createExcelSheetReportOrders(generalReportsDTO);
         return generalReportsDTO;
     }
 

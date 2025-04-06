@@ -163,6 +163,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN dp.demandEntity d " +
             "JOIN d.agentEntity a " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND c.id IN :listIds " +
             "AND a = :agentEntity " +
             "AND dp.products IS NOT NULL " +
 
@@ -176,11 +177,13 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN dp.demandEntity d " +
             "JOIN d.agentEntity a " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND bc.id IN :listIds " +
             "AND a = :agentEntity " +
             "AND dp.bundle IS NOT NULL")
     List<CategoryEntity> getListUniqueCategoryEntityByAgent(@Param("periodStart") LocalDateTime periodStart,
                                                      @Param("periodEnd") LocalDateTime periodEnd,
-                                                     @Param("agentEntity") AgentEntity agentEntity);
+                                                     @Param("agentEntity") AgentEntity agentEntity,
+                                                        @Param("listIds") List<UUID> listIds);
 
 }
 

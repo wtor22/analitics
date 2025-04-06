@@ -36,6 +36,10 @@
     background: #635872;
     color: #fff;
 }
+.form-check-input:checked {
+    background-color: #8B8BC5;
+    border-color: #8B8BC5;
+}
 #selectionForm label.btn{
     padding: 2px 8px;
 }
