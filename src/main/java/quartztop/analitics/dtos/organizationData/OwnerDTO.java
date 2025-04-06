@@ -14,4 +14,5 @@ public class OwnerDTO {
     private String fullName;
     private String name;
     private String uid; // Логин сотрудника
+    private boolean usedInReports;
 }

@@ -1,6 +1,7 @@
 package quartztop.analitics.services.crudOrganization;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import quartztop.analitics.dtos.organizationData.OwnerDTO;
 import quartztop.analitics.models.organizationData.OwnerEntity;
@@ -20,8 +21,26 @@ public class OwnerCRUDService {
         return ownerRepository.save(ownerEntity);
     }
     public List<OwnerDTO> getListOwnersDTO() {
-        List<OwnerEntity> ownerEntityList = ownerRepository.findAll();
+        List<OwnerEntity> ownerEntityList = ownerRepository.findAll(Sort.by(Sort.Direction.ASC, "fullName"));
+
         return ownerEntityList.stream().map(OwnerCRUDService::mapToDTO).toList();
+    }
+    public List<OwnerDTO> getListOwnerByUsedInReportTrue(){
+        List<OwnerEntity> ownerEntityList =  ownerRepository.findAllByUsedInReportsTrue();
+        return ownerEntityList.stream().map(OwnerCRUDService::mapToDTO).toList();
+    }
+
+    public List<OwnerDTO> setListOwnerUsedInReports(List<UUID> listOwnersUUID) {
+        List<OwnerEntity> ownerEntityList = ownerRepository.findAll();
+        ownerEntityList.forEach(o -> {
+            if(listOwnersUUID.contains(o.getId())) {
+                o.setUsedInReports(true);
+            } else {
+                o.setUsedInReports(false);
+            }
+        });
+        List<OwnerEntity> updatedListOwners = ownerRepository.saveAll(ownerEntityList);
+        return updatedListOwners.stream().map(OwnerCRUDService::mapToDTO).toList();
     }
 
     public Optional<OwnerEntity> getOptionalEntity(OwnerDTO ownerDTO) {
@@ -31,6 +50,7 @@ public class OwnerCRUDService {
         Optional<OwnerEntity> optionalOwnerEntity = ownerRepository.findById(id);
         return optionalOwnerEntity.map(OwnerCRUDService::mapToDTO).orElse(null);
     }
+
     public Optional<OwnerEntity> getOptionalEntity(UUID id) {
         return ownerRepository.findById(id);
     }
@@ -46,6 +66,7 @@ public class OwnerCRUDService {
         ownerEntity.setMiddleName(owner.getMiddleName());
         ownerEntity.setFirstName(owner.getFirstName());
         ownerEntity.setUid(owner.getUid());
+        ownerEntity.setUsedInReports(owner.isUsedInReports());
         return ownerEntity;
     }
     public static OwnerDTO mapToDTO(OwnerEntity owner) {
@@ -59,6 +80,7 @@ public class OwnerCRUDService {
         ownerDTO.setMiddleName(owner.getMiddleName());
         ownerDTO.setFirstName(owner.getFirstName());
         ownerDTO.setUid(owner.getUid());
+        ownerDTO.setUsedInReports(owner.isUsedInReports());
         return ownerDTO;
     }
 }

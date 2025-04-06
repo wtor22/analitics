@@ -17,14 +17,14 @@ public class DefaultController {
     @RequestMapping("/")
     public String index(Model model) {
         model.addAttribute("groupedCategories", categoryCRUDService.getMapCategoryByPath());
-        //model.addAttribute("listCategoriesUsedInReports", categoryCRUDService.getMapCategoryByPathUsedInReport());
+        model.addAttribute("listOwners", ownerCRUDService.getListOwnerByUsedInReportTrue());
         return "index";
     }
 
     @RequestMapping("/settings")
     public String settings(Model model) {
 
-        model.addAttribute("listManagers", ownerCRUDService.getListOwnersDTO());
+        model.addAttribute("listOwners", ownerCRUDService.getListOwnersDTO());
         model.addAttribute("groupedCategories", categoryCRUDService.getMapCategoryByPath());
 
         return "settings";

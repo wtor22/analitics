@@ -36,9 +36,12 @@
                     </div>
 
                     <div class="col-2 selector-date">
-                        <label for="manager" class="">Выберите менеджера:</label>
-                        <select id="manager" class="form-select" name="manager" required>
+                        <label for="managers" class="">Выберите менеджера:</label>
+                        <select id="managers" class="form-select" name="manager" required>
                             <option value="">-- Выберите --</option>
+                            <th:block th:each="manager : ${listOwners}">
+                                <option th:value="${manager.id}" th:text="${manager.fullName}"></option>
+                            </th:block>
                         </select>
                     </div>
 

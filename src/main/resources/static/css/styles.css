@@ -32,7 +32,9 @@
     padding: 30px;
     border-radius: 15px;
 }
-#selectionForm button.btn.btn-classic, #demands-updater button.btn.btn-classic{
+#selectionForm button.btn.btn-classic,
+#demands-updater button.btn.btn-classic,
+#owners-updater button.btn.btn-classic{
     background: #635872;
     color: #fff;
 }

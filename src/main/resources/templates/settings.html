@@ -15,14 +15,12 @@
 <div th:insert="~{fragments/fragments :: logo}" class="position-logo"></div>
 
 
-    <div class="container">
+    <div class="container mb-5">
         <H1 class="mb-5">Настройки программы. <br/><span style="color:red; font-weight: bold;">СЮДА НЕ ЛЕЗТЬ</span></H1>
-
         <form id="demands-updater">
             <div class="d-flex flex-column">
                 <h3 >Загрузить отгрузки за период</h3>
                 <div class="d-flex flex-row">
-
                     <div class="d-flex flex-row col-auto me-3 selector-date">
                         <div class="me-2">
                             <label for="date-demand-start" class="ps-3">Период c</label>
@@ -37,6 +35,27 @@
             </div>
             <button type="submit" class="btn btn-classic m-4">ЗАГРУЗИТЬ</button>
             <span id="demands-updater-response" class="d-none" style="color: red;"></span>
+        </form>
+    </div>
+
+    <div class="container">
+        <h3>Установка менеджеров для отчетов</h3>
+        <form id="owners-updater">
+            <div id="owner-container" class="col-12 selector-date d-flex flex-wrap p-4">
+                <div class="form-check m-2" th:each="owner : ${listOwners}">
+                    <input type="checkbox"
+                           class="form-check-input"
+                           th:id="${owner.id}"
+                           th:name="owner.fullName"
+                           th:value="${owner.id}"
+                           th:checked="${owner.usedInReports}"> <!-- если нужно предварительное выделение -->
+                    <label class="form-check-label"
+                           th:for="${owner.id}"
+                           th:text="${owner.fullName}"></label>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-classic m-4">ОТПРАВИТЬ</button>
+            <span id="owners-updater-response" class="d-none" style="color: red;"></span>
         </form>
     </div>
 </body>

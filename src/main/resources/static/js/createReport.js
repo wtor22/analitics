@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const managerSelect = document.getElementById("manager");
+    const managerSelect = document.getElementById("managers");
     const tagsContainer = document.getElementById("tags-container");
     const submitButton = document.querySelector("button[type='submit']");
     const startCurrentDateInput = document.getElementById("date-current-start");
@@ -19,20 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         this.textContent = allChecked ? "Выбрать все" : "Снять все";
     });
 
-    // Загружаем менеджеров
-    function loadManagers() {
-        fetch('/api/v1/client/manager')
-            .then(response => response.json())
-            .then(data => {
-                data.forEach(manager => {
-                    const option = document.createElement("option");
-                    option.value = manager.id;
-                    option.textContent = manager.name;
-                    managerSelect.appendChild(option);
-                });
-            })
-            .catch(error => console.error("Ошибка загрузки менеджеров:", error));
-    }
+
 
     // Загружаем теги для выбранного менеджера
     function loadTags(managerId) {
@@ -82,9 +69,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 console.error("Ошибка загрузки тегов:", error);
             });
     }
-
-    // Загружаем менеджеров и категории при старте
-    loadManagers();
 
     // Обработчик выбора менеджера
     managerSelect.addEventListener("change", function () {

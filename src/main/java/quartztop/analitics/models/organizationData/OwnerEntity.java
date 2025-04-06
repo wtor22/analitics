@@ -1,5 +1,6 @@
 package quartztop.analitics.models.organizationData;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -24,5 +25,7 @@ public class OwnerEntity {
     private String fullName;
     private String name;
     private String uid; // Логин сотрудника
+    @Column(name = "used_in_reports")
+    private boolean usedInReports;
 
 }
