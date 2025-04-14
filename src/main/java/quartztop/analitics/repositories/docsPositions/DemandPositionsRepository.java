@@ -21,6 +21,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN d.agentEntity a " +
             "JOIN a.groupAgentEntityList gl " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND d.applicable = true " +
             "AND gl = :groupAgentEntity")
     List<DemandPositionsEntity> findAllByPeriodAndTags(@Param("periodStart") LocalDateTime periodStart,
                                               @Param("periodEnd") LocalDateTime periodEnd,
@@ -35,6 +36,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN dp.demandEntity d " +
             "JOIN d.agentEntity a " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND d.applicable = true " +
             "AND c = :category " +
             "AND a = :agent " +
             "AND dp.products IS NOT NULL), 0) " +
@@ -48,6 +50,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN dp.demandEntity d " +
             "JOIN d.agentEntity a " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND d.applicable = true " +
             "AND c = :category " +
             "AND a = :agent " +
             "AND dp.bundle IS NOT NULL " +
@@ -71,6 +74,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "     JOIN dp.demandEntity d " +
             "     JOIN d.agentEntity a " +
             "     WHERE d.moment BETWEEN :periodStart AND :periodEnd " +
+            "     AND d.applicable = true " +
             "     AND c = :category " +
             "     AND a = :agent " +
             "     AND dp.products IS NOT NULL), 0) " +
@@ -88,6 +92,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "     JOIN dp.demandEntity d " +
             "     JOIN d.agentEntity a " +
             "     WHERE d.moment BETWEEN :periodStart AND :periodEnd " +
+            "     AND d.applicable = true " +
             "     AND c = :category " +
             "     AND a = :agent " +
             "     AND dp.bundle IS NOT NULL " +
@@ -99,37 +104,6 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
 
 
 
-
-
-//    @Query("SELECT dp FROM DemandPositionsEntity dp " +
-//            "LEFT JOIN dp.products p " +
-//            "LEFT JOIN p.categoryEntity c " +
-//            "JOIN dp.demandEntity d " +
-//            "JOIN d.agentEntity a " +
-//            "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
-//            "AND c =: category " +
-//            "AND a = :agent " +
-//            "AND dp.products IS NOT NULL " +
-//
-//            "UNION " +
-//
-//            "SELECT dp FROM DemandPositionsEntity dp " +
-//            "LEFT JOIN dp.bundle b " +
-//            "LEFT JOIN b.bundleProducts bp " +
-//            "LEFT JOIN bp.product bp_product " +
-//            "LEFT JOIN bp_product.categoryEntity bc " +
-//            "JOIN dp.demandEntity d " +
-//            "JOIN d.agentEntity a " +
-//            "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
-//            "AND c =: category " +
-//            "AND a = :agent " +
-//            "AND dp.bundle IS NOT NULL")
-//    List<DemandPositionsEntity> getListPositionEntityByAgentAndCategory(@Param("periodStart") LocalDateTime periodStart,
-//                                                                        @Param("periodEnd") LocalDateTime periodEnd,
-//                                                                        @Param("category") CategoryEntity category,
-//                                                                        @Param("agent")AgentEntity agent);
-
-
     @Query("SELECT DISTINCT c FROM DemandPositionsEntity dp " +
             "LEFT JOIN dp.products p " +
             "LEFT JOIN p.categoryEntity c " +
@@ -137,6 +111,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN d.agentEntity a " +
             "JOIN a.groupAgentEntityList gl " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND d.applicable = true " +
             "AND gl = :groupAgentEntity " +
             "AND dp.products IS NOT NULL " +
 
@@ -151,6 +126,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN d.agentEntity a " +
             "JOIN a.groupAgentEntityList gl " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND d.applicable = true " +
             "AND gl = :groupAgentEntity " +
             "AND dp.bundle IS NOT NULL")
         List<CategoryEntity> getListUniqueCategoryEntity(@Param("periodStart") LocalDateTime periodStart,
@@ -163,6 +139,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN dp.demandEntity d " +
             "JOIN d.agentEntity a " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND d.applicable = true " +
             "AND c.id IN :listIds " +
             "AND a = :agentEntity " +
             "AND dp.products IS NOT NULL " +
@@ -177,6 +154,7 @@ public interface DemandPositionsRepository extends JpaRepository<DemandPositions
             "JOIN dp.demandEntity d " +
             "JOIN d.agentEntity a " +
             "WHERE d.moment >= :periodStart AND d.moment <= :periodEnd " +
+            "AND d.applicable = true " +
             "AND bc.id IN :listIds " +
             "AND a = :agentEntity " +
             "AND dp.bundle IS NOT NULL")

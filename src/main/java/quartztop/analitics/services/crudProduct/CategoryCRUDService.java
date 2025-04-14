@@ -24,6 +24,23 @@ public class CategoryCRUDService {
         return categoryRepository.save(categoryEntity);
     }
 
+    public void saveAll(List<CategoryEntity> categoryEntityList) {
+        categoryRepository.saveAll(categoryEntityList);
+    }
+
+    public List<CategoryEntity> getAllEntity() {
+        return categoryRepository.findAll();
+    }
+
+    public List<CategoryDTO> getAllEntitySortedByOrder() {
+        List<CategoryEntity> categoryEntityList = categoryRepository.findAllOrdered();
+        return categoryEntityList.stream().map(CategoryCRUDService::mapToDto).toList();
+    }
+
+    public List<CategoryDTO> getAllEntityWhereOrderIsNull() {
+        List<CategoryEntity> categoryEntityList = categoryRepository.findAllWithNullOrZeroOrder();
+        return categoryEntityList.stream().map(CategoryCRUDService::mapToDto).toList();
+    }
     /**
      * Метод возвращает Отсортированную по алфавиту МАПУ с ключом PATH_NAME
      * и в value List с категориями

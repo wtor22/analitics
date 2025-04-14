@@ -34,4 +34,7 @@ public class ProductsEntity {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BundleProduct> bundleProducts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductAttributeEntity> attributes = new ArrayList<>();
 }

@@ -1,4 +1,4 @@
-package quartztop.analitics.controllers;
+package quartztop.analitics.controllers.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

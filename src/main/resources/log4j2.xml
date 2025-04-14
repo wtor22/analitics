@@ -4,7 +4,7 @@
     <Property name="LOG_PATTERN">
         %d{yyyy-MM-dd HH:mm:ss.SSS} %5p ${hostName} --- [%15.15t] %-40.40c{1.} : %m%n%ex
     </Property>
-    <Property name="LOG_DIR">C:/crmPdfSource/Logs</Property>
+    <Property name="LOG_DIR">/app/logs</Property>
 </Properties>
 <Appenders>
     <Console name="ConsoleAppender" target="SYSTEM_OUT" follow="true">

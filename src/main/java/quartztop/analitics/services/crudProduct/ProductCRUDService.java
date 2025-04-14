@@ -9,12 +9,13 @@ import quartztop.analitics.dtos.products.ProductDTO;
 import quartztop.analitics.models.organizationData.CountriesEntity;
 import quartztop.analitics.models.products.CategoryEntity;
 import quartztop.analitics.models.products.ProductsEntity;
-import quartztop.analitics.repositories.product.CategoryRepository;
 import quartztop.analitics.repositories.product.ProductRepository;
 import quartztop.analitics.services.crudOrganization.CountriesCRUDService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,10 +25,13 @@ public class ProductCRUDService {
     private final ProductRepository productRepository;
     private final CategoryCRUDService categoryCRUDService;
     private final CountriesCRUDService countriesCRUDService;
+    private final ProductAttributeService productAttributeService;
 
     public ProductsEntity create(ProductDTO productDTO) {
 
         ProductsEntity productsEntity = mapToEntity(productDTO);
+
+        productAttributeService.addAttributesToProduct(productsEntity, productDTO.getAttributes());
 
         if (productDTO.getCountry() != null ) {
             setCountry(productsEntity, productDTO.getCountry());
@@ -54,13 +58,8 @@ public class ProductCRUDService {
 
     }
 
-    public Optional<ProductsEntity> getOptionalEntity(ProductDTO productDTO) {
-        return productRepository.findById(productDTO.getId());
-    }
-    public ProductDTO getProductDto(UUID id) {
-        Optional<ProductsEntity> optionalProductsEntity = productRepository.findById(id);
-        return optionalProductsEntity.map(ProductCRUDService::mapToDTO).orElse(null);
-
+    public Optional<ProductsEntity> getOptionalEntityById(UUID id) {
+        return productRepository.findById(id);
     }
 
     private void setCountry(ProductsEntity productsEntity, CountriesDTO countriesDTO) {
@@ -74,6 +73,16 @@ public class ProductCRUDService {
         } else {
             productsEntity.setCountries(optionalCountriesEntity.get());
         }
+    }
+    public Optional<ProductsEntity> getOptionalEntity(ProductDTO productDTO) {
+        return productRepository.findById(productDTO.getId());
+    }
+
+    public List<UUID> findIdsNotInDb(List<UUID> inputIds) {
+        List<UUID> existingIds = productRepository.findExistingIds(inputIds);
+        return inputIds.stream()
+                .filter(id -> !existingIds.contains(id))
+                .collect(Collectors.toList());
     }
 
     public static ProductDTO mapToDTO(ProductsEntity product) {
@@ -101,4 +110,6 @@ public class ProductCRUDService {
 
         return productsEntity;
     }
+
+
 }

@@ -22,6 +22,7 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
 
         // TODO назначить редиректы попозже
 
+
 //        if (roles.contains("ROLE_ADMIN")) {
 //            response.sendRedirect("/");
 //        } else if (roles.contains("ROLE_SUPER_ADMIN")) {

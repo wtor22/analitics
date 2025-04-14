@@ -29,4 +29,6 @@ public class ProductDTO {
 
     @JsonIgnore
     private List<BundleDTO> bundleDTOList = new ArrayList<>();
+
+    private List<ProductAttributeDTO> attributes = new ArrayList<>();
 }

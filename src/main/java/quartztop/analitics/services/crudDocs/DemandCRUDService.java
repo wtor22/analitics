@@ -10,7 +10,7 @@ import quartztop.analitics.dtos.docs.DemandDTO;
 import quartztop.analitics.dtos.docsPositions.DemandPositionsDTO;
 import quartztop.analitics.dtos.organizationData.OrganizationDTO;
 import quartztop.analitics.dtos.organizationData.OwnerDTO;
-import quartztop.analitics.dtos.organizationData.StoreDto;
+import quartztop.analitics.dtos.organizationData.store.StoreDto;
 import quartztop.analitics.models.counterparty.AgentEntity;
 import quartztop.analitics.models.counterparty.ContractEntity;
 import quartztop.analitics.models.docs.DemandEntity;

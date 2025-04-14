@@ -21,6 +21,6 @@ public class CategoryEntity {
     private String description;
     private String name;
     private String pathName;
-    @Column(name = "used_in_reports", nullable = true)
+    private Integer orderInBotIndex;
     private boolean usedInReports;
 }

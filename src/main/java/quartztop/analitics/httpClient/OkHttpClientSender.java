@@ -10,12 +10,16 @@ import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import quartztop.analitics.dtos.docs.DemandDTO;
+import quartztop.analitics.dtos.organizationData.store.StoreDto;
+import quartztop.analitics.dtos.organizationData.store.StoreWrapper;
 import quartztop.analitics.dtos.products.BundleDTO;
 import quartztop.analitics.dtos.products.ProductDTO;
-import quartztop.analitics.dtos.wrappers.DemandWrapperDTO;
+import quartztop.analitics.dtos.docs.DemandWrapperDTO;
+import quartztop.analitics.dtos.reports.ReportStockByStoreWrapper;
+import quartztop.analitics.dtos.reports.StockByStore;
+import quartztop.analitics.dtos.reports.StockReportRow;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -50,6 +54,8 @@ public class OkHttpClientSender {
             "positions.assortment, positions.assortment.country, positions.assortment.productFolder";
 
     private final String expandsBundle = "?expand=country, components.assortment, components.assortment.country, components.assortment.productFolder";
+
+    private final String expandsProduct = "?expand=country, productFolder";
     private String offset = "";
 
 
@@ -59,16 +65,17 @@ public class OkHttpClientSender {
 
         log.info("PRINT BASE URL " + baseUrl);
         Request request = new Request.Builder()
-                .url(baseUrl + "demand/" + id + "?" + expandsDemand)
+                .url(baseUrl + "entity/demand/" + id + "?" + expandsDemand)
                 .addHeader("Authorization",token)
                 .build();
         //log.info("REQUEST " + request.toString());
         return processResponse(request, new TypeReference<>(){});
     }
+
     public ProductDTO getProduct(UUID id) {
 
         Request request = new Request.Builder()
-                .url(baseUrl + "product/" + id)
+                .url(baseUrl + "entity/product/" + id + expandsProduct)
                 .addHeader("Authorization",token)
                 .build();
 
@@ -77,26 +84,19 @@ public class OkHttpClientSender {
     public BundleDTO getBundle(UUID id) {
 
         Request request = new Request.Builder()
-                .url(baseUrl + "bundle/" + id + expandsBundle)
+                .url(baseUrl + "entity/bundle/" + id + expandsBundle)
                 .addHeader("Authorization",token)
                 .build();
 
-        //log.info("REQUEST " + request);
         return processResponse(request, new TypeReference<>(){});
     }
-    public List<DemandDTO> getListDemandsToDay(String offset, LocalDateTime startPeriod, LocalDateTime endPeriod) {
 
-        LocalDateTime startDate = LocalDate.of(2023,1, 1).atStartOfDay();
-        String formattedStartDate = startDate.format(formatter);
+    public List<DemandDTO> getListDemandsToDay(String offset, LocalDateTime startPeriod, LocalDateTime endPeriod) {
 
         String formattedStartPeriod = startPeriod.format(formatter);
         String formattedEndPeriod = endPeriod.format(formatter);
 
-//        LocalDateTime toDay = LocalDate.now().minusDays(7).atStartOfDay();
-//        String formattedStartDateWeek = toDay.format(formatter);
-
-
-        String url = baseUrl + "demand" + "?filter=updated>" + formattedStartPeriod +  ";updated<" + formattedEndPeriod +
+        String url = baseUrl + "entity/demand" + "?filter=updated>" + formattedStartPeriod +  ";updated<" + formattedEndPeriod +
                 "&offset=" + offset + "&limit=100&" + expandsDemand;
         Request request = new Request.Builder()
                 .url(url)
@@ -106,6 +106,30 @@ public class OkHttpClientSender {
         DemandWrapperDTO demandWrapperDTO = processResponse(request, new TypeReference<>() {});
 
         return demandWrapperDTO.getRows();
+    }
+
+    public List<StockReportRow> getListStockByStore(String offset) {
+        String url = baseUrl + "report/stock/bystore?offset=" + offset;
+        Request request = new Request.Builder()
+                .url(url)
+                .addHeader("Authorization", token)
+                .build();
+
+        ReportStockByStoreWrapper reportStockByStoreWrapper = processResponse(request, new TypeReference<ReportStockByStoreWrapper>() {});
+
+        return reportStockByStoreWrapper.getRows();
+    }
+
+    public List<StoreDto> getListStoreDto() {
+
+        Request request = new Request.Builder()
+                .url(baseUrl + "entity/store")
+                .addHeader("Authorization",token)
+                .build();
+
+        StoreWrapper storeWrapper = processResponse(request, new TypeReference<>() {});
+        return storeWrapper.getRows();
+
     }
 
     @SneakyThrows

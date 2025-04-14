@@ -3,8 +3,6 @@
   font-weight: 400;
   font-style: normal;
 }
-
-
 .logo {
     width: 400px;
     margin: 30px;
@@ -34,9 +32,14 @@
 }
 #selectionForm button.btn.btn-classic,
 #demands-updater button.btn.btn-classic,
-#owners-updater button.btn.btn-classic{
+#owners-updater button.btn.btn-classic,
+#saveBtn.btn.btn-classic{
     background: #635872;
     color: #fff;
+}
+.clear-btn {
+    background-color: transparent;
+    border:none;
 }
 .form-check-input:checked {
     background-color: #8B8BC5;
@@ -44,4 +47,29 @@
 }
 #selectionForm label.btn{
     padding: 2px 8px;
+}
+
+.ripple-shadow-wrapper {
+  display: inline-block;
+  filter: url(#ripple);
+  border-radius: 16px;
+  padding: 0.5rem;
+}
+
+.ripple-shadow-wrapper button {
+  border: none;
+  padding: 1rem 2rem;
+  font-weight: bold;
+  border-radius: 16px;
+  background-color: white;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+
+.ripple-shadow-wrapper button:hover {
+  transform: scale(1.05);
+}
+
+li.sortable-item {
+    cursor: grab;
 }

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Вход</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+</head>
+<body>
+<div th:insert="~{fragments/fragments :: logo}" class="position-logo"></div>
+
+
+<div class="container  d-flex justify-content-around align-items-center" style="border-radius: 50%;background: #635872;; width: 600px;color: #fff;height: 600px;">
+
+    <div class="col-auto">
+        <h2>Вход в систему</h2>
+        <form th:action="@{/login}" method="post">
+            <label class="form-label">Email:</label>
+            <input class="form-control form-control-lg" type="text" name="username"/><br/>
+
+            <label class="form-label">Пароль:</label>
+            <input class="form-control form-control-lg" type="password" name="password"/><br/>
+
+            <label class="form-label">
+                <input type="checkbox" name="remember-me"/> Запомнить меня
+            </label><br/>
+
+            <div class="ripple-shadow-wrapper">
+                <button class="btn btn-light btn-lg" type="submit">Войти</button>
+            </div>
+<!--            <button class="ripple-shadow" type="submit">Войти</button>-->
+
+            <div th:if="${param.error}" class="mx-auto" style="position: absolute;padding-top: 10px;">
+                <p style="color: white;background: red;text-align: center;font-weight: bold;">Неверный логин или пароль</p>
+            </div>
+
+            <div th:if="${param.logout}">
+                <p>Вы вышли из системы</p>
+            </div>
+        </form>
+
+    </div>
+
+</div>
+
+<svg style="display: none;">
+    <filter id="ripple" x="-50%" y="-50%" width="200%" height="200%">
+        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" result="turbulence">
+            <animate attributeName="baseFrequency" dur="6s" values="0.015;0.02;0.015" repeatCount="indefinite" />
+        </feTurbulence>
+        <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="8" xChannelSelector="R" yChannelSelector="G"/>
+        <feGaussianBlur stdDeviation="4" result="blurred"/>
+        <feBlend in="SourceGraphic" in2="blurred" mode="multiply"/>
+    </filter>
+</svg>
+
+
+</body>
+</html>

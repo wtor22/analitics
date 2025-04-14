@@ -1,17 +1,15 @@
 package quartztop.analitics.dtos.docs;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import quartztop.analitics.dtos.counterparty.AgentDTO;
 import quartztop.analitics.dtos.counterparty.ContractDTO;
 import quartztop.analitics.dtos.docsPositions.DemandPositionsDTO;
 import quartztop.analitics.dtos.organizationData.OrganizationDTO;
 import quartztop.analitics.dtos.organizationData.OwnerDTO;
-import quartztop.analitics.dtos.organizationData.StoreDto;
+import quartztop.analitics.dtos.organizationData.store.StoreDto;
 import quartztop.analitics.models.docs.InvoiceOutEntity;
 
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;

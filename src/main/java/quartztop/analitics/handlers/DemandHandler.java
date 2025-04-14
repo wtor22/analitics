@@ -1,4 +1,4 @@
-package quartztop.analitics.services.handlers;
+package quartztop.analitics.handlers;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -93,19 +93,16 @@ public class DemandHandler {
     private void checkAndCreateDemands(List<DemandDTO> demandDTOList) {
         List<DemandDTO> listDemandsToSave = new ArrayList<>();
         for (DemandDTO demandDTO: demandDTOList) {
-            log.info("CHECK DEMAND ID " + demandDTO.getId());
+            //log.info("CHECK DEMAND ID " + demandDTO.getId());
             if (demandDTO.getDeleted() != null) {
                 demandCRUDService.deleteDemandById(demandDTO.getId());
                 continue;
             }
-
             LocalDateTime momentUpdateDemandFromStorage = demandCRUDService.getMomentUpdateById(demandDTO.getId());
             if (momentUpdateDemandFromStorage == demandDTO.getUpdated()) continue;
             listDemandsToSave.add(demandDTO);
             prepareDemand(demandDTO);
         }
         listDemandsToSave.forEach(demandCRUDService::create);
-
-
     }
 }

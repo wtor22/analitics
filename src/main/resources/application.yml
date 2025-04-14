@@ -14,4 +14,4 @@ spring:
     cache: false
 app:
   integration:
-    base-url: https://api.moysklad.ru/api/remap/1.2/entity/
+    base-url: https://api.moysklad.ru/api/remap/1.2/

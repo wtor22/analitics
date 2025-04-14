@@ -1,4 +1,4 @@
-package quartztop.analitics.dtos.wrappers;
+package quartztop.analitics.dtos.docs;
 
 import quartztop.analitics.dtos.docs.DemandDTO;
 
