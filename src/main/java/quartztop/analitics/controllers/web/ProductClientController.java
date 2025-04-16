@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import quartztop.analitics.dtos.products.BundleDTO;
 import quartztop.analitics.dtos.products.CategoryDTO;
-import quartztop.analitics.dtos.responses.categoryResponse.CategoryResponse;
+import quartztop.analitics.responses.categoryResponse.CategoryResponse;
 import quartztop.analitics.httpClient.OkHttpClientSender;
 import quartztop.analitics.models.products.CategoryEntity;
 import quartztop.analitics.services.crudProduct.CategoryCRUDService;

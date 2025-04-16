@@ -1,4 +1,4 @@
-package quartztop.analitics.dtos.responses.stockResponse;
+package quartztop.analitics.responses.stockResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class StockByStoreResponse {
 
     private String nameStore;
+    private String nameToBot;
     private float stock;
     private float reserve;
     private float inTransit;

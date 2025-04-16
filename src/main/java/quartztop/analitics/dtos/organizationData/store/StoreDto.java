@@ -10,5 +10,5 @@ public class StoreDto {
     private String name;
     private String description;
     private String nameToBot;
-    private boolean existsInStockReport;
+    private Integer orderInBotIndex;
 }

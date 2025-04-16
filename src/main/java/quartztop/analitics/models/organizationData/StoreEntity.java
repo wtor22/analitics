@@ -17,13 +17,9 @@ public class StoreEntity {
 
     @Id
     private UUID id; //  внешний id из API
-
     private String name;
-
     @Column(length = 4096)
     private String description;
-
     private String nameToBot;
-
-    private boolean existsInStockReport;
+    private Integer orderInBotIndex;
 }

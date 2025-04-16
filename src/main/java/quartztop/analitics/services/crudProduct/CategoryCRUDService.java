@@ -38,7 +38,7 @@ public class CategoryCRUDService {
     }
 
     public List<CategoryDTO> getAllEntityWhereOrderIsNull() {
-        List<CategoryEntity> categoryEntityList = categoryRepository.findAllWithNullOrZeroOrder();
+        List<CategoryEntity> categoryEntityList = categoryRepository.findAllNotOrdered();
         return categoryEntityList.stream().map(CategoryCRUDService::mapToDto).toList();
     }
     /**

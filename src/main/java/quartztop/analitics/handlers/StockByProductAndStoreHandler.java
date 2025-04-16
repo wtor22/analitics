@@ -4,9 +4,9 @@ package quartztop.analitics.handlers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import quartztop.analitics.dtos.responses.stockResponse.StockByCategoryResponse;
-import quartztop.analitics.dtos.responses.stockResponse.StockByProductResponse;
-import quartztop.analitics.dtos.responses.stockResponse.StockByStoreResponse;
+import quartztop.analitics.responses.stockResponse.StockByCategoryResponse;
+import quartztop.analitics.responses.stockResponse.StockByProductResponse;
+import quartztop.analitics.responses.stockResponse.StockByStoreResponse;
 import quartztop.analitics.models.products.ProductAttributeEntity;
 import quartztop.analitics.models.products.ProductsEntity;
 import quartztop.analitics.models.reports.StockByStoreEntity;
@@ -21,14 +21,10 @@ import java.util.*;
 public class StockByProductAndStoreHandler {
 
     private final ReportStockByStoreService reportStockByStoreService;
-    private final CategoryCRUDService categoryCRUDService;
-
 
     public List<StockByCategoryResponse> getResponseStockByProductAndStore(String requestStock) {
 
-
         List<StockByProductResponse> listStockByProductResponse = new ArrayList<>();
-
 
         // Тут ищется список остатков товаров которые попадают в поисковый запрос
         List<StockByStoreEntity> stockByStoreEntityList = reportStockByStoreService.getStockBySearch(requestStock);
@@ -41,11 +37,18 @@ public class StockByProductAndStoreHandler {
 
             if (stockByStoreEntity.getStock() == 0 && stockByStoreEntity.getInTransit() == 0) continue;
 
+
             ProductsEntity productsEntity = stockByStoreEntity.getProductsEntity();
             if (productsEntity.getCategoryEntity() == null) continue;
 
             StockByStoreResponse stockByStoreResponse = new StockByStoreResponse();
-            stockByStoreResponse.setNameStore(stockByStoreEntity.getStoreEntity().getName());
+
+            if (stockByStoreEntity.getStoreEntity().getNameToBot() != null) {
+                stockByStoreResponse.setNameStore(stockByStoreEntity.getStoreEntity().getNameToBot());
+
+            } else {
+                stockByStoreResponse.setNameStore(stockByStoreEntity.getStoreEntity().getName());
+            }
             stockByStoreResponse.setStock(stockByStoreEntity.getStock());
             stockByStoreResponse.setInTransit(stockByStoreEntity.getInTransit());
             stockByStoreResponse.setReserve(stockByStoreEntity.getReserve());
@@ -64,6 +67,7 @@ public class StockByProductAndStoreHandler {
             responseByProduct.setProductName(product.getName());
             responseByProduct.setArticle(product.getArticle());
             responseByProduct.setByStoreResponseList(stores);
+
             responseByProduct.setCategory(product.getCategoryEntity().getName());
 
             List<ProductAttributeEntity> productAttributeEntityList = product.getAttributes();
@@ -89,7 +93,6 @@ public class StockByProductAndStoreHandler {
                     }
                 }
             }
-
             listStockByProductResponse.add(responseByProduct);
         }
 
@@ -114,7 +117,10 @@ public class StockByProductAndStoreHandler {
 
         }
 
-        // Сортировка по orderInBotIndex
+        // Сортировка по Store orderInBotIndex
+
+
+        // Сортировка по Category orderInBotIndex
         stockByCategoryResponseList.sort(Comparator.comparingInt(category -> {
             List<StockByProductResponse> products = category.getProductsList();
             return (products != null && !products.isEmpty())
@@ -127,8 +133,6 @@ public class StockByProductAndStoreHandler {
             productList.sort(Comparator.comparing(StockByProductResponse::getArticle));
         }
 
-
-        log.error("PRINT SIZE LIST mapProductResponse " + mapProductResponse.size());
         return stockByCategoryResponseList;
 
     }

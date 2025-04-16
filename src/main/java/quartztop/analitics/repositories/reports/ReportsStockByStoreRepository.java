@@ -14,8 +14,11 @@ public interface ReportsStockByStoreRepository extends JpaRepository<StockByStor
 
     @Query("SELECT s FROM StockByStoreEntity s " +
             "JOIN s.productsEntity p " +
+            "JOIN s.storeEntity st " +
             "JOIN p.categoryEntity c " +
             "WHERE (LOWER(p.name) LIKE LOWER(CONCAT('%', :search, '%')) OR LOWER(p.article) LIKE LOWER(CONCAT('%', :search, '%'))) " +
-            "AND c.orderInBotIndex > 0 ")
+            "AND c.orderInBotIndex > 0 " +
+            "AND st.orderInBotIndex > 0 " +
+            "ORDER BY st.orderInBotIndex ASC")
     List<StockByStoreEntity> getStockReportsBySearch(@Param("search") String search);
 }

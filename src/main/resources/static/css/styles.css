@@ -33,7 +33,7 @@
 #selectionForm button.btn.btn-classic,
 #demands-updater button.btn.btn-classic,
 #owners-updater button.btn.btn-classic,
-#saveBtn.btn.btn-classic{
+#saveBtn.btn.btn-classic, form .btn.btn-classic{
     background: #635872;
     color: #fff;
 }

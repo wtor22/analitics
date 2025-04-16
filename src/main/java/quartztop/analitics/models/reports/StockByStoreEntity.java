@@ -28,11 +28,11 @@ public class StockByStoreEntity {
     @Column(name = "store_name")
     private String storeName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "store_id")
     private StoreEntity storeEntity;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "product_id")
     private ProductsEntity productsEntity;
 

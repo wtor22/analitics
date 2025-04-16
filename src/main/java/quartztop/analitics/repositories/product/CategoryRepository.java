@@ -16,6 +16,6 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> 
     //List<CategoryEntity> findAllByOrderInBotIndexIsNull();
 
     @Query("SELECT c FROM CategoryEntity c WHERE c.orderInBotIndex IS NULL OR c.orderInBotIndex = 0")
-    List<CategoryEntity> findAllWithNullOrZeroOrder();
+    List<CategoryEntity> findAllNotOrdered();
 
 }

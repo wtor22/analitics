@@ -1,4 +1,4 @@
-package quartztop.analitics.dtos.responses.categoryResponse;
+package quartztop.analitics.responses.categoryResponse;
 
 import lombok.Data;
 import quartztop.analitics.dtos.products.CategoryDTO;
