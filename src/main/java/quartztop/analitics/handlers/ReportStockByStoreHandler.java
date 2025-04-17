@@ -13,6 +13,7 @@ import quartztop.analitics.services.crudOrganization.StoreCRUDService;
 import quartztop.analitics.services.crudProduct.ProductCRUDService;
 import quartztop.analitics.services.reports.ReportStockByStoreService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,6 +33,8 @@ public class ReportStockByStoreHandler {
     private static boolean isDoIt = false;
 
     public String downloadReportWithOffset() {
+
+        Long startMiles = System.currentTimeMillis();
 
         if (isDoIt)  {
             log.error("return ЖДИ!!! - Операция выполняется");
@@ -94,7 +97,21 @@ public class ReportStockByStoreHandler {
                     .toList());
         }
         isDoIt = false;
-        return "Операция завершена успешно, Количество обработанных позиций остатков: " + countOperationStock;
+
+        Long stopMiles = System.currentTimeMillis();
+        int executionTime = (int) (stopMiles - startMiles) / 1000;
+        String time = "";
+        if (executionTime > 60) {
+            String minuts = String.valueOf(executionTime / 60) ;
+            String sec = String.valueOf(executionTime % 60) ;
+            time = time.concat(minuts).concat(" минут ").concat(sec).concat(" секунд");
+        } else {
+            String sec = String.valueOf(executionTime) ;
+            time = time.concat(sec).concat(" секунд");
+        }
+
+
+        return "Операция завершена успешно, Количество обработанных позиций остатков: " + countOperationStock + " за " + time;
     }
 
     private void checkStoreInDb() {

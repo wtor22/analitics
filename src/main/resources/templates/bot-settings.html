@@ -83,6 +83,17 @@
             </div>
         </div>
     </div>
+    <div class="flex flex-column p-2">
+        <div class="selector-date p-2" >
+            <h6 class="p-2 px-3" style="font-weight: 600;">Обновить остатки на текущий момент</h6>
+            <button  id="buttonUpdateStock" type="submit" class="btn btn-classic m-3">
+                <span id="buttonText">Обновить</span>
+                <span id="spinnerStock" class="spinner-grow spinner-grow-sm d-none" aria-hidden="true"></span>
+                <span id="spinnerStockText" class="d-none" role="status">Загружаю...</span>
+            </button>
+            <p id="updateStockResponse" class="d-none px-3"></p>
+        </div>
+    </div>
 </div>
 </body>
 </html>

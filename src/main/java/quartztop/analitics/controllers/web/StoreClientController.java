@@ -30,7 +30,7 @@ public class StoreClientController {
         return ResponseEntity.ok(storeCRUDService.getListDtoNotExistingInStockReport());
     }
 
-    @PostMapping("/set-alias")
+    @PutMapping("/set-alias")
     public ResponseEntity<StoreResponse> setStoreAlias(@RequestBody StoreAliasDTO storeAliasDTO) {
         storeCRUDService.updateAlias(storeAliasDTO.getId(),storeAliasDTO.getAlias());
         return ResponseEntity.ok(getStoresResponse());

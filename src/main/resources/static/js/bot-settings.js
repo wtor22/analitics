@@ -4,9 +4,55 @@ document.addEventListener("DOMContentLoaded", function () {
     const storeSelectorContainer = document.getElementById("storeSelectorContainer");
     const modalSetStoreAlias = document.getElementById("modalSetStoreAlias");
     const form = document.querySelector('#setAliasForm');
+    const buttonUpdateStock = document.getElementById("buttonUpdateStock");
+
 
     fetchCategories();
     fetchStores();
+
+    buttonUpdateStock.addEventListener("click", function (event) {
+        loadStocks(); // запускаем fetch
+    });
+
+    function loadStocks() {
+        const buttonText = document.getElementById("buttonText");
+        const spinnerStock = document.getElementById("spinnerStock");
+        const spinnerStockText = document.getElementById("spinnerStockText");
+
+        buttonText.classList.add("d-none");
+        spinnerStock.classList.remove("d-none");
+        spinnerStockText.classList.remove("d-none");
+        buttonUpdateStock.disabled = true;
+
+        fetch('api/v1/client/report/stock/by-store', {
+            method: 'GET'
+        })
+        .then(response => {
+            if(!response.ok)  throw new Error('Ошибка при загрузке данных');
+            return response.text();
+        })
+        .then(data => {
+        console.log("PRINT RESPONSE " + data)
+            const updateStockResponse = document.getElementById("updateStockResponse");
+            updateStockResponse.classList.remove("d-none");
+            updateStockResponse.textContent = data;
+            buttonText.classList.remove("d-none");
+            spinnerStock.classList.add("d-none");
+            spinnerStockText.classList.add("d-none");
+            buttonUpdateStock.disabled = false;
+        })
+        .catch(error => {
+            updateStockResponse.classList.add("text-danger");
+            updateStockResponse.textContent = "Ошибка при загрузке: " + error.message;
+            console.error("Ошибка при загрузке:", error);
+            buttonText.classList.remove("d-none");
+            spinnerStock.classList.add("d-none");
+            spinnerStockText.classList.add("d-none");
+            buttonUpdateStock.disabled = false;
+        });
+    }
+
+
 
     form.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -32,7 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alias: alias
         };
         fetch('api/v1/client/store/set-alias', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
