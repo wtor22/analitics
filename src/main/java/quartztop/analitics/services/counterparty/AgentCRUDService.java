@@ -14,6 +14,7 @@ import quartztop.analitics.repositories.counterparty.AgentRepository;
 import quartztop.analitics.repositories.counterparty.GroupAgentRepository;
 import quartztop.analitics.services.crudOrganization.OwnerCRUDService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,6 +42,21 @@ public class AgentCRUDService {
     public List<AgentEntity> getListEntityByTag(GroupAgentEntity groupAgentEntity) {
         return agentRepository.findAllByGroupAgent(groupAgentEntity);
     }
+    public List<AgentEntity> getAll() {
+        return agentRepository.findAll();
+    }
+
+    public void createAll(List<AgentDTO> agentDTOList) {
+
+        List<AgentEntity> agentEntityList = new ArrayList<>();
+        for (AgentDTO agentDTO: agentDTOList) {
+            AgentEntity agentEntity = mapToEntity(agentDTO);
+            setOwner(agentEntity,agentDTO.getOwner());
+            if(agentDTO.getTags() != null) setGroups(agentEntity, agentDTO.getTags());
+            agentEntityList.add(agentEntity);
+        }
+        agentRepository.saveAll(agentEntityList);
+    }
 
 
     public List<GroupAgentDTO> getGroupByManager(OwnerEntity ownerEntity) {
@@ -65,6 +81,7 @@ public class AgentCRUDService {
     }
 
     private void setOwner(AgentEntity agentEntity, OwnerDTO ownerDTO) {
+        if(ownerDTO == null) return;
         Optional<OwnerEntity> optionalOwnerEntity = ownerCRUDService.getOptionalEntity(ownerDTO);
         if(optionalOwnerEntity.isEmpty()) {
             log.info("Owner {} NOT FOUND", ownerDTO.getFullName());
@@ -88,6 +105,7 @@ public class AgentCRUDService {
         agentEntity.setLegalFirstName(agent.getLegalFirstName());
         agentEntity.setLegalLastName(agent.getLegalLastName());
         agentEntity.setLegalMiddleName(agent.getLegalMiddleName());
+        agentEntity.setUpdated(agent.getUpdated());
         return agentEntity;
     }
     public static AgentDTO mapToDTO(AgentEntity agent) {
@@ -101,6 +119,7 @@ public class AgentCRUDService {
         agentDTO.setLegalFirstName(agent.getLegalFirstName());
         agentDTO.setLegalLastName(agent.getLegalLastName());
         agentDTO.setLegalMiddleName(agent.getLegalMiddleName());
+        agentDTO.setUpdated(agent.getUpdated());
         return agentDTO;
     }
 }

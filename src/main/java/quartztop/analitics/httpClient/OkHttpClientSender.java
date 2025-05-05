@@ -26,16 +26,20 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+//TODO УДАЛИТЬ ЭТОТ КЛАСС ЕСЛИ ВСЕ ОК
+
 @Component
 @RequiredArgsConstructor
 @Slf4j
 public class OkHttpClientSender {
 
+
+
     private final ObjectMapper objectMapper;
 
     OkHttpClient httpClient = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.MINUTES)  // тут можешь выставить даже 30 минут, если надо
+            .readTimeout(5, TimeUnit.MINUTES)
             .writeTimeout(5, TimeUnit.MINUTES)
             .build();
 
@@ -43,11 +47,13 @@ public class OkHttpClientSender {
     private String baseUrl;
     @Value("${app.integration.token}")
     private String token;
+    @Value("${app.bot-integration.base-url}")
+    private String botBaseUrl;
 
     private static final int MAX_RETRIES = 5;
     private static final int DEFAULT_RETRY_AFTER = 10; // Время ожидания по умолчанию в секундах
 
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     private final String expandsDemand = "expand=owner, agent, agent.owner, contract, contract.agent, " +
             "contract.agent.owner, store, organization, positions, " +
@@ -56,14 +62,18 @@ public class OkHttpClientSender {
     private final String expandsBundle = "?expand=country, components.assortment, components.assortment.country, components.assortment.productFolder";
 
     private final String expandsProduct = "?expand=country, productFolder";
-    private String offset = "";
+    private final String offset = "";
 
+    public int getCountUsersBot(){
+        Request request = new Request.Builder()
+                .url(botBaseUrl)
+                .build();
+        return processResponse(request, new TypeReference<>() {
+        });
+    }
 
 
     public DemandDTO getDemand(UUID id) {
-
-
-        log.info("PRINT BASE URL " + baseUrl);
         Request request = new Request.Builder()
                 .url(baseUrl + "entity/demand/" + id + "?" + expandsDemand)
                 .addHeader("Authorization",token)

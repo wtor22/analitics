@@ -8,6 +8,7 @@ import quartztop.analitics.dtos.docsPositions.DemandPositionsDTO;
 import quartztop.analitics.dtos.products.BundleDTO;
 import quartztop.analitics.dtos.products.ProductDTO;
 import quartztop.analitics.httpClient.OkHttpClientSender;
+import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
 import quartztop.analitics.models.products.BundleEntity;
 import quartztop.analitics.models.products.ProductsEntity;
 import quartztop.analitics.services.crudDocs.DemandCRUDService;
@@ -26,7 +27,7 @@ import java.util.UUID;
 @Slf4j
 public class DemandHandler {
 
-    private final OkHttpClientSender clientSender;
+    private final MySkladClient clientSender;
     private final ProductCRUDService productCRUDService;
     private final BundleCRUDService bundleCRUDService;
     private final DemandCRUDService demandCRUDService;

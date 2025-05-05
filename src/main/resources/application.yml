@@ -15,3 +15,7 @@ spring:
 app:
   integration:
     base-url: https://api.moysklad.ru/api/remap/1.2/
+  bot-integration:
+    base-url: http://localhost:8085/api/v1
+file:
+  upload-dir: C:/app-uploads/

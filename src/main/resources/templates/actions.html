@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>Акции компании</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/summernote-emoji@0.1.7/dist/summernote-emoji.css" rel="stylesheet">
+    <link th:href="@{/css/styles.css}" rel="stylesheet">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.20/lang/summernote-ru-RU.min.js"></script>
+
+    <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <script th:src="@{/js/action.js}"></script>
+
+</head>
+<body>
+<div th:insert="~{fragments/fragments :: logo}" class="position-logo"></div>
+<div class="container mb-5">
+    <H1 class="mb-5">Акции компании</H1>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAction">Создать новую </button>
+    <div id="actions-container"></div>
+
+</div>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="modalAction" tabindex="-1" aria-labelledby="titleFormAction"
+     aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="titleFormAction"> <span id="action-name"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <form id="formCreateAction" enctype="multipart/form-data">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <input type="hidden" name="id" id="actionId">
+                        <div class="d-flex flex-wrap">
+                            <div class="col-4 d-flex flex-column">
+                                <div class="p-2">
+                                    <button class="btn btn-classic mt-4" type="submit">Сохранить</button>
+                                </div>
+                                <div class="p-2">
+                                    <div class="selector-date p-2 pb-3">
+                                        <p class="m-0 ps-2">Период действия акции</p>
+                                        <div class="d-flex flex-row">
+                                            <div class="me-2">
+                                                <input id="date-current-start" name="startActionDate" type="date" class="form-control" >
+                                            </div>
+                                            <div class="">
+                                                <input id="date-current-end" name="endActionDate" type="date" class="form-control" >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-2">
+                                    <div class="selector-date p-2 pb-3">
+                                        <label for="name-action" class="ps-2">Название акции:</label>
+                                        <input id="name-action" type="text" class="form-control" name="name" required>
+                                    </div>
+                                </div>
+                                <div class="p-2">
+                                    <div class="selector-date p-2 pb-3">
+                                        <label for="title-image-action" class="ps-2">Обложка акции (загрузить изображение):</label>
+                                        <input id="title-image-action" type="file" class="form-control" name="imageFile" accept="image/*">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-8 d-flex align-items-end p-2">
+                                <div id="image-container"></div>
+                            </div>
+                            <div class="col-12">
+                                <div class="p-2">
+                                    <div class="selector-date p-2 pb-3">
+                                        <label class="ps-2" for="descriptionEditor">Краткое описание акции:</label><br>
+                                        <textarea id="descriptionEditor" name="description" rows="10"></textarea>
+                                    </div>
+                                </div>
+                                <div class="p-2">
+                                    <div class="selector-date p-2 pb-3">
+                                        <label class="ps-2" for="editor">Полное описание (контент):</label>
+                                        <textarea id="editor" name="content" rows="10"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

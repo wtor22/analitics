@@ -1,11 +1,11 @@
-package quartztop.analitics.controllers.web;
+package quartztop.analitics.controllers.restApi;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import quartztop.analitics.dtos.docs.DemandDTO;
-import quartztop.analitics.httpClient.OkHttpClientSender;
+import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
 import quartztop.analitics.services.crudDocs.DemandCRUDService;
 import quartztop.analitics.handlers.DemandHandler;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Slf4j
 public class DemandClientController {
 
-    private final OkHttpClientSender httpClientSender;
+    private final MySkladClient httpClientSender;
     private final DemandCRUDService demandCRUDService;
     private final DemandHandler demandHandler;
 

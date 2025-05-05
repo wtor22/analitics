@@ -32,20 +32,23 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(  "/api/v1/client/report/stock/by-store",
-                                        "/api/v1/client/product/bundle/**","/api/v1/bot/stock/search",
+                                .requestMatchers(  "/api/v1/client/**", "/api/webhooks/agent",
+                                        "/api/v1/client/product/bundle/**","/api/v1/bot/**",
                                         "/api/v1/client/product/bundle/**",
                                         "/api/v1/client/demand/**","/images/**","/css/**",
                                         "/js/**", "/favicon.ico", "/login", "/logout").permitAll() // Разрешаем доступ к этим страницам без аутентификации
                                 .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
                 )
-                        .formLogin(form -> form
-                                .loginPage("/login")
-                                .successHandler(customAuthenticationSuccessHandler)
-                                .loginProcessingUrl("/login")
-                                .failureHandler(new CustomAuthenticationFailureHandler())
-                                .permitAll()
-                                //.defaultSuccessUrl("/", true) // После успешного входа перенаправляем на главную страницу
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/api/webhooks/agent") // <--- ВОТ ТУТ ОТКЛЮЧАЕМ
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .successHandler(customAuthenticationSuccessHandler)
+                        .loginProcessingUrl("/login")
+                        .failureHandler(new CustomAuthenticationFailureHandler())
+                        .permitAll()
+                        //.defaultSuccessUrl("/", true) // После успешного входа перенаправляем на главную страницу
                 )
                 .rememberMe(rememberMe ->
                         rememberMe

@@ -1,3 +1,8 @@
+
+a {
+    cursor: pointer;
+}
+
 .rubik-mono-one-regular {
   font-family: "Rubik Mono One", monospace;
   font-weight: 400;
@@ -18,14 +23,34 @@
     padding: 3px 15px;
     text-shadow: 1px 1px 1px aliceblue;
 }
+.errorMessage {
+    color: red;
+    border: 2px solid;
+    display: inline;
+    padding: 20px 40px;
+    font-size: 20px;
+    font-weight: 600;
+}
+.action-data {
+    background-color: rgba(255, 0, 0, 0.23);
+}
+.action-data div{
+    background-color: rgba(255,255,255,0.9);;
+}
 
+.color-box p {
+    background: rgba(255,255,255,0.6);
+    border-radius: 0;
+    padding: 0 5px 5px;
+    margin: 0;
+}
 .selector-date {
     background: #E7DDF3;
     border-radius: 10px;
     padding: 5px 15px 5px;
     box-sizing: border-box;
 }
-#selectionForm {
+#selectionForm, .color-box {
     background: #DFDFF4;
     padding: 30px;
     border-radius: 15px;
@@ -69,4 +94,24 @@
 
 li.sortable-item {
     cursor: grab;
+}
+
+.note-editable {
+    background-color: #fff;
+    color: #3e3e3e;
+}
+
+#actions-container {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.action-card {
+    background-color: #FFF4FB;
+    padding: 5px 10px;
+    border: 1px solid #E9E4E9;
+}
+.action-title h3 {
+    display: inline-block;
+    text-decoration: underline;
 }

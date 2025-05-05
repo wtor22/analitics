@@ -6,12 +6,40 @@ document.addEventListener("DOMContentLoaded", function () {
     const categoryContainer = document.getElementById("category-container");
     const ownersUpdaterForm = document.getElementById("owners-updater");
 
-    //const managerSelect = document.getElementById("manager");
+    const agentsUpdaterForm = document.getElementById("agents-updater");
+    const stringAgentResponse = document.getElementById("agents-updater-response");
+
+        agentsUpdaterForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+            updaterAgents();
+        });
+
+        // Обновляем контрагентов
+        function updaterAgents() {
+            fetch('/api/v1/client/agent' , {
+                method: 'GET',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Ошибка обработки: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+
+                stringAgentResponse.textContent = data;
+                stringAgentResponse.classList.remove("d-none");
+            })
+            .catch(error => {
+                stringAgentResponse.textContent = `Ошибка: ${error.message}`;
+            });
+        }
 
     ownersUpdaterForm.addEventListener("submit", function (event) {
             event.preventDefault();
             setManagers();
     });
+
     function setManagers() {
         const checkedInputs = document.querySelectorAll('#owner-container .form-check-input:checked');
         const selectedOwners = Array.from(checkedInputs).map(input => input.id);

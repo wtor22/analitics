@@ -1,4 +1,4 @@
-package quartztop.analitics.controllers.web;
+package quartztop.analitics.controllers.restApi;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import quartztop.analitics.dtos.products.BundleDTO;
 import quartztop.analitics.dtos.products.CategoryDTO;
+import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
 import quartztop.analitics.responses.categoryResponse.CategoryResponse;
 import quartztop.analitics.httpClient.OkHttpClientSender;
 import quartztop.analitics.models.products.CategoryEntity;
@@ -21,7 +22,8 @@ import java.util.UUID;
 @Slf4j
 public class ProductClientController {
 
-    private final OkHttpClientSender httpClientSender;
+    //private final OkHttpClientSender httpClientSender;
+    private final MySkladClient httpClientSender;
     private final CategoryCRUDService categoryCRUDService;
 
     // Ничего не сохраняет в БД. Чисто для теста

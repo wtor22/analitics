@@ -19,8 +19,6 @@ public class StockController {
 
     @GetMapping("/by-store")
     public ResponseEntity<String> getStocks() {
-
-        log.error("START GET STOCK CONTROLLER");
         return ResponseEntity.ok(reportStockByStoreHandler.downloadReportWithOffset());
 
     }

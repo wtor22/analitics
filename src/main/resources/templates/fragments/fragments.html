@@ -17,11 +17,11 @@
 
             <div sec:authorize="isAuthenticated()" class="nav-bar p-1">
                 <p class="d-inline-flex gap-1">
-                    <a href="/settings" class="btn active" role="button">Настройки программы</a>
+                    <a href="/actions" class="btn active" role="button">Акции</a>
                     <a href="/bot-settings" class="btn active" role="button">Настройки Бота</a>
+                    <a href="/bot-statistics" class="btn active" role="button">Статистика бота</a>
+                    <a href="/settings" class="btn active" role="button">Настройки программы</a>
                 </p>
-
-
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
     <div th:fragment="futter" >
         <div class="d-flex flex-column flex-xl-row justify-content-between bottom-panel">
             <div class="">
-                <a th:href="@{/settings}">Настройки</a>
+<!--                <a th:href="@{/settings}">Настройки</a>-->
             </div>
         </div>
     </div>

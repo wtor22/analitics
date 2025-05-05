@@ -8,6 +8,7 @@ import quartztop.analitics.dtos.products.ProductDTO;
 import quartztop.analitics.dtos.reports.StockByStore;
 import quartztop.analitics.dtos.reports.StockReportRow;
 import quartztop.analitics.httpClient.OkHttpClientSender;
+import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
 import quartztop.analitics.models.organizationData.StoreEntity;
 import quartztop.analitics.services.crudOrganization.StoreCRUDService;
 import quartztop.analitics.services.crudProduct.ProductCRUDService;
@@ -24,7 +25,7 @@ import java.util.UUID;
 public class ReportStockByStoreHandler {
 
     private final ReportStockByStoreService reportStockByStoreService;
-    private final OkHttpClientSender clientSender;
+    private final MySkladClient clientSender;
     private final ProductCRUDService productCRUDService;
     private final StoreCRUDService storeCRUDService;
 
@@ -109,8 +110,6 @@ public class ReportStockByStoreHandler {
             String sec = String.valueOf(executionTime) ;
             time = time.concat(sec).concat(" секунд");
         }
-
-
         return "Операция завершена успешно, Количество обработанных позиций остатков: " + countOperationStock + " за " + time;
     }
 

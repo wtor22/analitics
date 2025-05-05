@@ -7,7 +7,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import quartztop.analitics.dtos.products.CategoryDTO;
+import quartztop.analitics.integration.botApiResponses.BuilderBotResponse;
+import quartztop.analitics.integration.botApiResponses.ButtonDto;
+import quartztop.analitics.integration.botApiResponses.StatisticsResponses;
 import quartztop.analitics.models.products.CategoryEntity;
+import quartztop.analitics.services.actions.ActionService;
 import quartztop.analitics.services.crudOrganization.OwnerCRUDService;
 import quartztop.analitics.services.crudProduct.CategoryCRUDService;
 
@@ -20,6 +24,8 @@ public class DefaultController {
 
     private final OwnerCRUDService ownerCRUDService;
     private final CategoryCRUDService categoryCRUDService;
+    private final BuilderBotResponse builderBotResponse;
+    private final BuilderBotResponse builderStatisticsResponse;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -51,10 +57,29 @@ public class DefaultController {
 
         List<CategoryEntity> notSelectedCategories = categoryCRUDService.getAllEntity();
         List<CategoryDTO> selectedCategories = categoryCRUDService.getAllEntityWhereOrderIsNull();
-        log.warn("SIZE LIST CATEGORIES " + notSelectedCategories.size());
+        List<ButtonDto> buttonDtoList = builderBotResponse.listButtonsResponse();
+
+        model.addAttribute("botImageButtonList", buttonDtoList);
         model.addAttribute("categoriesIsPresent", notSelectedCategories);
         model.addAttribute("selectedCategories", selectedCategories);
 
         return "bot-settings";
+    }
+
+    @RequestMapping("/actions")
+    public String actions() {
+        return "actions";
+    }
+
+    @RequestMapping("/bot-statistics")
+    public String botStatistics(Model model) {
+        StatisticsResponses statisticsResponses = builderStatisticsResponse.statisticsResponses();
+        if (statisticsResponses == null) {
+            model.addAttribute("errorMessage", "Сервис бота временно недоступен.");
+        } else {
+            model.addAttribute("statisticsResponses", statisticsResponses);
+        }
+
+        return "bot-statistics";
     }
 }
