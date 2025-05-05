@@ -32,7 +32,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(  "/api/v1/client/**", "/api/webhooks/agent",
+                                .requestMatchers(  "/api/v1/client/**", "/api/webhooks",
                                         "/api/v1/client/product/bundle/**","/api/v1/bot/**",
                                         "/api/v1/client/product/bundle/**",
                                         "/api/v1/client/demand/**","/images/**","/css/**",
@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/webhooks/agent") // <--- ВОТ ТУТ ОТКЛЮЧАЕМ
+                        .ignoringRequestMatchers("/api/webhooks") // <--- ВОТ ТУТ ОТКЛЮЧАЕМ
                 )
                 .formLogin(form -> form
                         .loginPage("/login")

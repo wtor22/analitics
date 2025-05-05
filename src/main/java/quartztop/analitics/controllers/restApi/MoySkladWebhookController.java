@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import quartztop.analitics.dtos.counterparty.AgentDTO;
-import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
-import quartztop.analitics.services.counterparty.AgentCRUDService;
+import quartztop.analitics.handlers.webhooksHandlers.WebhookHandler;
+
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("api/webhooks")
@@ -14,19 +15,28 @@ import quartztop.analitics.services.counterparty.AgentCRUDService;
 @Slf4j
 public class MoySkladWebhookController {
 
-    private final MySkladClient clientSender;
-    private final AgentCRUDService agentCRUDService;
 
-    @PostMapping("/agent")
-    public ResponseEntity<Void> receiveAgentWebhook(@RequestParam("id") String id) {
+    private final List<WebhookHandler> handlers;
 
-        log.warn("ПОЛУЧЕН WEBHOOK id: " + id );
 
-        AgentDTO agentDTO = clientSender.getAgent(id);
+    @PostMapping
+    public ResponseEntity<Void> receiveAgentWebhook(
+            @RequestParam String id,
+            @RequestParam String type,
+            @RequestParam Map<String, String> params // вдруг потом другие параметры появятся
+    ) {
+        long start = System.currentTimeMillis();
+        log.warn("ПОЛУЧЕН WEBHOOK type: {} id: {}", type, id);
 
-        log.warn("AGENT IS - " + agentDTO.getName());
+        handlers.stream()
+                .filter(h -> h.supports(type))
+                .findFirst()
+                .ifPresentOrElse(
+                        h -> h.handle(id, params),
+                        () -> log.warn("Нет обработчика для типа {}", type)
+                );
+        log.error("Затраченное время " + (System.currentTimeMillis() - start));
 
-        log.warn("AGENT SAVED " + agentCRUDService.create(agentDTO).getUpdated());
         return ResponseEntity.ok().build();
     }
 }
