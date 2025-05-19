@@ -10,8 +10,9 @@ import quartztop.analitics.dtos.products.CategoryDTO;
 import quartztop.analitics.integration.botApiResponses.BuilderBotResponse;
 import quartztop.analitics.integration.botApiResponses.ButtonDto;
 import quartztop.analitics.integration.botApiResponses.StatisticsResponses;
+import quartztop.analitics.models.organizationData.Organization;
 import quartztop.analitics.models.products.CategoryEntity;
-import quartztop.analitics.services.actions.ActionService;
+import quartztop.analitics.services.crudOrganization.OrganizationCRUDService;
 import quartztop.analitics.services.crudOrganization.OwnerCRUDService;
 import quartztop.analitics.services.crudProduct.CategoryCRUDService;
 
@@ -26,6 +27,7 @@ public class DefaultController {
     private final CategoryCRUDService categoryCRUDService;
     private final BuilderBotResponse builderBotResponse;
     private final BuilderBotResponse builderStatisticsResponse;
+    private final OrganizationCRUDService organizationCRUDService;
 
     @GetMapping("/login")
     public String loginPage() {
@@ -67,7 +69,9 @@ public class DefaultController {
     }
 
     @RequestMapping("/actions")
-    public String actions() {
+    public String actions(Model model) {
+        List<Organization> organizations = organizationCRUDService.getAll();
+        model.addAttribute("organizations",organizations);
         return "actions";
     }
 
@@ -78,6 +82,7 @@ public class DefaultController {
             model.addAttribute("errorMessage", "Сервис бота временно недоступен.");
         } else {
             model.addAttribute("statisticsResponses", statisticsResponses);
+            log.error("STATISTICS NOT NULL");
         }
 
         return "bot-statistics";

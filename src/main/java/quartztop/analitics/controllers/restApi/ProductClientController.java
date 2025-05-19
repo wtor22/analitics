@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import quartztop.analitics.dtos.products.BundleDTO;
 import quartztop.analitics.dtos.products.CategoryDTO;
 import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
-import quartztop.analitics.responses.categoryResponse.CategoryResponse;
-import quartztop.analitics.httpClient.OkHttpClientSender;
+import quartztop.analitics.responses.stock.categoryResponse.CategoryResponse;
 import quartztop.analitics.models.products.CategoryEntity;
 import quartztop.analitics.services.crudProduct.CategoryCRUDService;
 

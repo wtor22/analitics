@@ -4,13 +4,12 @@ package quartztop.analitics.handlers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import quartztop.analitics.responses.stockResponse.StockByCategoryResponse;
-import quartztop.analitics.responses.stockResponse.StockByProductResponse;
-import quartztop.analitics.responses.stockResponse.StockByStoreResponse;
+import quartztop.analitics.responses.stock.stockResponse.StockByCategoryResponse;
+import quartztop.analitics.responses.stock.stockResponse.StockByProductResponse;
+import quartztop.analitics.responses.stock.stockResponse.StockByStoreResponse;
 import quartztop.analitics.models.products.ProductAttributeEntity;
 import quartztop.analitics.models.products.ProductsEntity;
 import quartztop.analitics.models.reports.StockByStoreEntity;
-import quartztop.analitics.services.crudProduct.CategoryCRUDService;
 import quartztop.analitics.services.reports.ReportStockByStoreService;
 
 import java.util.*;
@@ -28,8 +27,6 @@ public class StockByProductAndStoreHandler {
 
         // Тут ищется список остатков товаров которые попадают в поисковый запрос
         List<StockByStoreEntity> stockByStoreEntityList = reportStockByStoreService.getStockBySearch(requestStock);
-
-        log.error("PRINT SIZE LIST stockByStoreEntityList " + stockByStoreEntityList.size());
 
         Map<ProductsEntity, List<StockByStoreResponse>> mapProductResponse = new HashMap<>();
 

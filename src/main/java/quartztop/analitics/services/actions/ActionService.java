@@ -2,16 +2,23 @@ package quartztop.analitics.services.actions;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import quartztop.analitics.dtos.actions.ActionDTO;
-import quartztop.analitics.dtos.actions.TelegramActionDTO;
+import quartztop.analitics.models.organizationData.Organization;
+import quartztop.analitics.repositories.organizationData.OrganizationRepository;
+import quartztop.analitics.responses.actions.TelegramActionDTO;
 import quartztop.analitics.exceptions.EntityAlreadyExistsException;
 import quartztop.analitics.models.actions.ActionEntity;
 import quartztop.analitics.repositories.actions.ActionRepository;
+import quartztop.analitics.services.crudOrganization.OrganizationCRUDService;
+import quartztop.analitics.utils.Region;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -19,6 +26,8 @@ import java.util.Optional;
 @Slf4j
 public class ActionService {
     private final ActionRepository actionRepository;
+    private final OrganizationRepository organizationRepository;
+    private final OrganizationCRUDService organizationCRUDService;
 
     public ActionDTO saveOrUpdate(ActionDTO actionDTO) {
 
@@ -42,19 +51,50 @@ public class ActionService {
             }
         });
 
+        // Загружаем организации по списку ID
+        List<Organization> organizations = organizationRepository.findAllById(actionDTO.getOrganizationIds());
+        actionEntity.setActionOrganizationList(organizations);
+
         ActionEntity saved = actionRepository.save(actionEntity);
         if (actionDTO.getId() != null) {
             log.info("Action \"{}\" was updated", saved.getName());
         } else {
             log.info("Action \"{}\" was created", saved.getName());
         }
-        log.error("SAVE ACTION " + saved.getId());
-        return mapToDto(saved);
+        ActionDTO savedActionDto = mapToDto(saved);
+        savedActionDto.setOrganizationIds(actionDTO.getOrganizationIds());
+        return savedActionDto;
     }
 
     public List<ActionDTO> getAllDto() {
         List<ActionEntity> actionEntityList = actionRepository.findAll();
-        return actionEntityList.stream().map(ActionService::mapToDto).toList();
+        List<ActionDTO> actionDTOS = new ArrayList<>();
+        for(ActionEntity action: actionEntityList) {
+            ActionDTO actionDTO = mapToDto(action);
+            List<UUID> orgIds = action.
+                    getActionOrganizationList()
+                    .stream()
+                    .map(Organization::getId)
+                    .toList();
+            actionDTO.setOrganizationIds(orgIds);
+            actionDTOS.add(actionDTO);
+        }
+        return actionDTOS;
+    }
+    public List<ActionDTO> getAllDtoByRegion() {
+        List<ActionEntity> actionEntityList = actionRepository.findAll();
+        List<ActionDTO> actionDTOS = new ArrayList<>();
+        for(ActionEntity action: actionEntityList) {
+            ActionDTO actionDTO = mapToDto(action);
+            List<UUID> orgIds = action.
+                    getActionOrganizationList()
+                    .stream()
+                    .map(Organization::getId)
+                    .toList();
+            actionDTO.setOrganizationIds(orgIds);
+            actionDTOS.add(actionDTO);
+        }
+        return actionDTOS;
     }
 
     public ActionDTO getDtoById(long id) {
@@ -62,7 +102,14 @@ public class ActionService {
         ActionEntity actionEntity = actionRepository.findById(id).orElseThrow(
                 () -> new RuntimeException("Not found action with id " + id)
         );
-        return mapToDto(actionEntity);
+        ActionDTO actionDTO = mapToDto(actionEntity);
+        List<UUID> orgIds = actionEntity.
+                getActionOrganizationList()
+                .stream()
+                .map(Organization::getId)
+                .toList();
+        actionDTO.setOrganizationIds(orgIds);
+        return actionDTO;
     }
 
     public List<TelegramActionDTO> getTelegramDTO() {
@@ -91,6 +138,7 @@ public class ActionService {
         actionDTO.setTitleImageUrl(action.getTitleImageUrl());
         actionDTO.setStartActionDate(action.getStartActionDate());
         actionDTO.setEndActionDate(action.getEndActionDate());
+        actionDTO.setActive(action.isActive());
 
         return actionDTO;
     }
@@ -105,14 +153,19 @@ public class ActionService {
         actionEntity.setTitleImageUrl(action.getTitleImageUrl());
         actionEntity.setStartActionDate(action.getStartActionDate());
         actionEntity.setEndActionDate(action.getEndActionDate());
+        actionEntity.setActive(action.isActive());
 
         return actionEntity;
     }
 
-    public Optional<TelegramActionDTO> getNextAction(Long currentId) {
-        Optional<ActionEntity> optionalEntity = (currentId == null)
-                ? actionRepository.findFirstByOrderByIdAsc()
-                : actionRepository.findFirstByIdGreaterThanOrderByIdAsc(currentId);
+    public Optional<TelegramActionDTO> getNextAction(Long currentId, Region region) {
+
+        Organization organization = organizationCRUDService.getOrgByRegion(region);
+
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        List<ActionEntity> result = actionRepository.findNextAction(currentId, LocalDate.now(), organization, pageRequest);
+        Optional<ActionEntity> optionalEntity = result.stream().findFirst();
+
 
         return optionalEntity.map(entity -> TelegramActionDTO.builder()
                 .name(entity.getName())

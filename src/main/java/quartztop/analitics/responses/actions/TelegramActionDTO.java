@@ -1,4 +1,4 @@
-package quartztop.analitics.dtos.actions;
+package quartztop.analitics.responses.actions;
 
 import lombok.Builder;
 import lombok.Getter;

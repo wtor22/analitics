@@ -5,10 +5,144 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalSetStoreAlias = document.getElementById("modalSetStoreAlias");
     const form = document.querySelector('#setAliasForm');
     const buttonUpdateStock = document.getElementById("buttonUpdateStock");
-
+    // Для установки админов бота
+    const phoneInput = document.getElementById("phone-search");
+    const searchBtn = document.getElementById("search-user-btn");
+    const resultsList = document.getElementById("search-results");
+    const adminList = document.getElementById("admin-list");
+    const listAdmins = document.getElementById("list-admins");
 
     fetchCategories();
     fetchStores();
+    fetchAdmins();
+
+
+    searchBtn.addEventListener("click", () => {
+        const query = phoneInput.value.trim();
+
+        if (query.length < 3) {
+            alert("⚠️ Введите минимум 3 символа");
+            return;
+        }
+        fetch(`/api/v1/bot/users/search?phone=${encodeURIComponent(query)}`)
+            .then(response => {
+                if (!response.ok) throw new Error("Ошибка поиска");
+                return response.json();
+            })
+            .then(users => {
+                resultsList.innerHTML = '';
+                if (users.length < 1) {
+                    alert("⚠️ Не найден ни один пользователь с таким номером телефона");
+                    return;
+                }
+                users.forEach(user => {
+                    const li = document.createElement("li");
+                    li.classList.add("d-flex", "align-items-center", "mb-2")
+                    li.textContent = `${user.firstName} ${user.lastName} (${user.phoneNumber})`;
+
+                    const addBtn = document.createElement("button");
+                    addBtn.classList.add("btn","btn-danger", "ms-2")
+                    addBtn.textContent = "Установить админом";
+                    addBtn.addEventListener("click", () => {
+                        addAdmin(user.telegramId);
+                    });
+                    li.appendChild(addBtn);
+                    resultsList.appendChild(li);
+                });
+                const clsBtn = document.createElement("button");
+                clsBtn.classList.add("btn","btn-secondary", "mt-3")
+                clsBtn.textContent = "Отменить";
+                clsBtn.addEventListener("click", () => {
+                    clearListSearch();
+                });
+                resultsList.appendChild(clsBtn);
+                resultsList.classList.remove("d-none");
+            })
+            .catch(err => {
+                console.error("❌ Ошибка при поиске:", err);
+            });
+    });
+
+    function clearListSearch() {
+        resultsList.innerHTML = '';
+        resultsList.classList.add("d-none");
+    }
+
+    function fetchAdmins() {
+        fetch(`/api/v1/bot/users/admins`)
+        .then(response => response.json())
+        .then(data => updateListAdmins(data))
+        .catch(error => console.error("Ошибка загрузки списка администраторов:", error));
+    }
+
+    function updateListAdmins(admins) {
+        listAdmins.innerHTML = '';
+        admins.forEach(admin => {
+            const li = document.createElement("li");
+            const spanName = document.createElement("span");
+            spanName.textContent = admin.firstName + " " + admin.lastName + " тел. " + admin.phoneNumber;
+
+            // Кнопка удаления админа
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.classList.add("remove-btn","clear-btn");
+            removeButton.textContent = "❌";
+
+            removeButton.addEventListener("click", function () {
+                li.remove();
+                deleteAdmin(admin.telegramId);
+            });
+
+            li.appendChild(spanName);
+            li.appendChild(removeButton);
+            listAdmins.appendChild(li);
+        });
+    }
+
+    function deleteAdmin(userId) {
+        fetch(`/api/v1/bot/users/delete-admin?userId=${userId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Не удалось удалить");
+            return response.text();
+        })
+        .then( data => {
+            resultsList.innerHTML = '';
+            alert("⚠️ " + data);
+            fetchAdmins();
+        })
+        .catch(err => {
+            console.error("❌ Ошибка при удалении:", err);
+        });
+    }
+
+    function addAdmin(userId) {
+        fetch(`/api/v1/bot/users/set-admin?userId=${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Не удалось добавить админа");
+            return response.text();
+        })
+        .then( data => {
+            resultsList.innerHTML = '';
+            clearListSearch();
+            alert("⚠️ " + data);
+            fetchAdmins();
+        })
+        .catch(err => {
+            console.error("❌ Ошибка при добавлении админа:", err);
+        });
+    }
 
     buttonUpdateStock.addEventListener("click", function (event) {
         loadStocks(); // запускаем fetch
@@ -32,7 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return response.text();
         })
         .then(data => {
-        console.log("PRINT RESPONSE " + data)
             const updateStockResponse = document.getElementById("updateStockResponse");
             updateStockResponse.classList.remove("d-none");
             updateStockResponse.textContent = data;
@@ -51,8 +184,6 @@ document.addEventListener("DOMContentLoaded", function () {
             buttonUpdateStock.disabled = false;
         });
     }
-
-
 
     form.addEventListener('submit', function (event) {
         event.preventDefault();
@@ -95,7 +226,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Закрыть модальное окно
                 const modal = bootstrap.Modal.getInstance(document.getElementById('modalSetStoreAlias'));
                 modal.hide();
-                //updateStoreSelectorContainer(data.listDtoNotExistingInStockReport);
                 updateSelectedStores(data.listDtoExistingInStockReport);
             })
             .catch(error => {
@@ -234,23 +364,20 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             body: JSON.stringify(orderedIds)
         })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ошибка при сохранении порядка');
-                }
-                return response.json();
-            })
-            .then(data => {
-                updateStoreSelectorContainer(data.listDtoNotExistingInStockReport);
-                updateSelectedStores(data.listDtoExistingInStockReport);
-            })
-            .catch(error => {
-                console.error("Ошибка при отправке порядка складов:", error);
-            });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Ошибка при сохранении порядка');
+            }
+            return response.json();
+        })
+        .then(data => {
+            updateStoreSelectorContainer(data.listDtoNotExistingInStockReport);
+            updateSelectedStores(data.listDtoExistingInStockReport);
+        })
+        .catch(error => {
+            console.error("Ошибка при отправке порядка складов:", error);
+        });
     }
-
-
-
 
     function fetchCategories() {
         fetch('api/v1/client/product/category/getAvailable')
@@ -264,7 +391,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function updateSortableCategories(categories) {
         sortableList.innerHTML = "";
-
         categories.forEach(cat => {
             const li = document.createElement("li");
             li.className = "sortable-item";
@@ -274,12 +400,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <button type="button" class="remove-btn clear-btn">❌</button>
                 <input type="hidden" name="categoryIds" value="${cat.id}" />
             `;
-
             li.querySelector(".remove-btn").addEventListener("click", function () {
                 li.remove();
                 saveCategoryOrderToBackend(); // раньше был fetchCategories()
             });
-
             sortableList.appendChild(li);
         });
     }

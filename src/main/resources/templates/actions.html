@@ -29,6 +29,13 @@
 <body>
 <div th:insert="~{fragments/fragments :: logo}" class="position-logo"></div>
 <div class="container mb-5">
+    <script th:inline="javascript">
+        const allOrganizations = /*[[${organizations}]]*/ [];
+        const organizationMap = {};
+        allOrganizations.forEach(org => {
+        organizationMap[org.id] = org.name;
+    });
+    </script>
     <H1 class="mb-5">Акции компании</H1>
     <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAction">Создать новую </button>
     <div id="actions-container"></div>
@@ -54,13 +61,22 @@
                                 <div class="p-2">
                                     <button class="btn btn-classic mt-4" type="submit">Сохранить</button>
                                 </div>
+                                <div class="p-2" th:each="organization: ${organizations}">
+                                    <div class="form-check p-2 selector-date">
+                                        <input class="form-check-input" type="checkbox" name="organizationIds" th:value="${organization.id}" th:id="'checkOrganization-' + ${organization.id}">
+                                        <label class="form-check-label" th:for="'checkOrganization-' + ${organization.id}">
+                                            <span th:text="${organization.name}">Организация</span>
+                                        </label>
+                                    </div>
+                                </div>
                                 <div class="p-2">
                                     <div class="selector-date p-2 pb-3">
                                         <p class="m-0 ps-2">Период действия акции</p>
-                                        <div class="d-flex flex-row">
-                                            <div class="me-2">
+                                        <div class="d-flex flex-row justify-content-between">
+                                            <div class="">
                                                 <input id="date-current-start" name="startActionDate" type="date" class="form-control" >
                                             </div>
+                                            <div style="line-height: 2;">&nbsp;-&nbsp;</div>
                                             <div class="">
                                                 <input id="date-current-end" name="endActionDate" type="date" class="form-control" >
                                             </div>

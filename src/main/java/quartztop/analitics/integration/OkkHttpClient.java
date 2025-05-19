@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class OkkHttpClient {
 
-    private final ObjectMapper objectMapper;
+    protected final ObjectMapper objectMapper;
 
     OkHttpClient httpClient = new OkHttpClient.Builder()
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -41,12 +41,28 @@ public class OkkHttpClient {
 
     protected final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
+
+    @SneakyThrows
+    public String simpleTextResponse(Request request) {
+        try (Response response = httpClient.newCall(request).execute()) {
+
+            String responseText;
+            ResponseBody body = response.body();
+            if (body != null) {
+                responseText = body.string();
+            } else {
+                responseText = "Пустой ответ";
+            }
+            return responseText;
+        } catch (Exception e) {
+            log.error("❌ Ошибка в simpleTextResponse:", e);
+            return "❌ Ошибка при обращении к серверу бота";
+        }
+    }
     @SneakyThrows
     public <T> T processResponse(Request request, TypeReference<T> typeReference) {
 
         int retries = 0;
-        //log.info("START PROCESS RESPONSE");
-
 
         while (retries < MAX_RETRIES) {
             try (Response response = httpClient.newCall(request).execute()) {

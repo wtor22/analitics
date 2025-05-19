@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import quartztop.analitics.dtos.organizationData.store.StoreAliasDTO;
 import quartztop.analitics.dtos.organizationData.store.StoreDto;
-import quartztop.analitics.responses.storeResponse.StoreResponse;
+import quartztop.analitics.responses.stock.storeResponse.StoreResponse;
 import quartztop.analitics.services.crudOrganization.StoreCRUDService;
 
 import java.util.List;

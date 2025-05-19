@@ -44,11 +44,51 @@ a {
     padding: 0 5px 5px;
     margin: 0;
 }
+#imageButtonSelectedContainer {
+    padding: 20px;
+}
+#imageButtonSelectedContainer li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+#imageButtonSelectedContainer li a{
+    width: 220px;
+}
+.bd-callouts {
+    padding: 10px 10px 5px;
+    border-left: 5px #bad5f2 solid;
+    background-color: #e2f5fb;
+    font-style: italic;
+    font-weight: lighter;
+}
+#search-results {
+    background: #fff;
+    border: 3px solid #a06ab0ba;
+    padding: 30px;
+    border-radius: 5px;
+    top: 110%;
+    box-shadow: 0 0 25px rgba(0,0,0,.1);
+    -webkit-box-shadow: 0 0 25px rgba(0,0,0,.1);
+}
+#search-results .btn {
+    padding: 0 5px 2px;
+    font-size: 0.85em;
+}
+#search-results li {
+    list-style: none;
+}
 .selector-date {
     background: #E7DDF3;
     border-radius: 10px;
     padding: 5px 15px 5px;
     box-sizing: border-box;
+    margin-bottom: 10px;
+}
+.selector-date h6 {
+    font-weight: 600;
+}
+.selector-date .content-container {
+    background: rgba(255,255,255,0.6);min-width: 250px;
 }
 #selectionForm, .color-box {
     background: #DFDFF4;
@@ -92,6 +132,10 @@ a {
   transform: scale(1.05);
 }
 
+.form-check.selector-date .form-check-input{
+    margin: 5px 10px 0 0;
+}
+
 li.sortable-item {
     cursor: grab;
 }
@@ -111,7 +155,23 @@ li.sortable-item {
     padding: 5px 10px;
     border: 1px solid #E9E4E9;
 }
-.action-title h3 {
-    display: inline-block;
-    text-decoration: underline;
+
+@media (max-width: 800px) {
+    .logo {
+        width: 200px;
+        margin: 10px;
+    }
+    .logo h1{
+        font-size: 15px;
+        letter-spacing: 9.5px;
+    }
+
+    #imageButtonSelectedContainer li a {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    #imageButtonSelectedContainer li {
+      margin-bottom: 40px;
+    }
 }

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import quartztop.analitics.dtos.actions.ActionDTO;
+import quartztop.analitics.dtos.actions.ActionStatusDTO;
 import quartztop.analitics.models.actions.ActionEntity;
 import quartztop.analitics.repositories.actions.ActionRepository;
 import quartztop.analitics.services.FileStorageService;
@@ -14,7 +15,9 @@ import quartztop.analitics.services.actions.ActionService;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/client/actions")
@@ -30,6 +33,10 @@ public class ActionController {
     public ResponseEntity<List<ActionDTO>> actions(){
         return ResponseEntity.ok(actionService.getAllDto());
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<ActionDTO> getActionByUUID(@PathVariable Long id) {
+        return ResponseEntity.ok(actionService.getDtoById(id));
+    }
 
     @PostMapping("/create")
     @ResponseBody
@@ -37,12 +44,13 @@ public class ActionController {
             @RequestParam String name,
             @RequestParam String description,
             @RequestParam String content,
+            @RequestParam(required = false)  List<UUID> organizationIds,
             @RequestParam("imageFile") MultipartFile imageFile,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startActionDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endActionDate
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startActionDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endActionDate
     ) {
-
         String imageUrl = null;
+
         try {
             if(!imageFile.isEmpty()) {
                 imageUrl = fileStorageService.saveImage(imageFile);
@@ -59,11 +67,9 @@ public class ActionController {
         actionDTO.setStartActionDate(startActionDate);
         actionDTO.setEndActionDate(endActionDate);
         actionDTO.setTitleImageUrl(imageUrl);
+        actionDTO.setOrganizationIds(organizationIds == null ? new ArrayList<>() :organizationIds);
 
         actionService.saveOrUpdate(actionDTO);
-
-        System.out.println("Имя акции: " + name);
-        System.out.println("Описание: " + description);
 
         return ResponseEntity.ok("Готово!");
     }
@@ -74,17 +80,17 @@ public class ActionController {
                                                 @RequestParam String name,
                                                 @RequestParam String description,
                                                 @RequestParam String content,
+                                                @RequestParam(required = false) List<UUID> organizationIds,
                                                 @RequestParam("imageFile") MultipartFile imageFile,
-                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startActionDate,
-                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endActionDate) {
+                                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startActionDate,
+                                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endActionDate) {
 
-        // 1. Получаем существующую акцию
         ActionEntity existing = actionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Акция не найдена"));
 
         String oldImageUrl = existing.getTitleImageUrl();
         String newImageUrl = oldImageUrl;
-        log.error("PRINT newImageUrl " + newImageUrl);
+
         try {
             if (!imageFile.isEmpty()) {
                 newImageUrl = fileStorageService.saveImage(imageFile);
@@ -96,8 +102,6 @@ public class ActionController {
             throw new RuntimeException("Ошибка при сохранении изображения", e);
         }
 
-        log.error("PRINT 2 newImageUrl " + newImageUrl);
-
         // Собираем DTO
         ActionDTO actionDTO = new ActionDTO();
         actionDTO.setId(id);
@@ -107,10 +111,23 @@ public class ActionController {
         actionDTO.setStartActionDate(startActionDate);
         actionDTO.setEndActionDate(endActionDate);
         actionDTO.setTitleImageUrl(newImageUrl);
+        actionDTO.setOrganizationIds(organizationIds == null ? new ArrayList<>() :organizationIds);
 
         return ResponseEntity.ok(actionService.saveOrUpdate(actionDTO));
 
     }
 
+    @PostMapping("/status")
+    public ResponseEntity<ActionStatusDTO> setStatusAction(@RequestBody ActionStatusDTO actionStatusDTO) {
 
+        log.error("Print STATUS IS ACTIVE " + actionStatusDTO.isActive() + " ID " + actionStatusDTO.getId());
+        ActionEntity existing = actionRepository.findById(actionStatusDTO.getId())
+                .orElseThrow(() -> new RuntimeException("Акция не найдена"));
+        existing.setActive(actionStatusDTO.isActive());
+        ActionEntity savedAction = actionRepository.save(existing);
+        ActionStatusDTO response = new ActionStatusDTO();
+        response.setActive(savedAction.isActive());
+        response.setId(savedAction.getId());
+        return ResponseEntity.ok(response);
+    }
 }

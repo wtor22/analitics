@@ -10,4 +10,5 @@ public class ButtonDto {
     private Long id;
     private String textButton;
     private String buttonValue;
+    private Integer orderInBotIndex;
 }

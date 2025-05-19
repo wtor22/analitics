@@ -1,4 +1,4 @@
-package quartztop.analitics.responses.storeResponse;
+package quartztop.analitics.responses.stock.storeResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

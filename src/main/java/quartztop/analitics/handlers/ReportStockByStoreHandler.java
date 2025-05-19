@@ -90,6 +90,7 @@ public class ReportStockByStoreHandler {
         if (!listStockStoreRowsWithMissingProduct.isEmpty()) {
             for (StockReportRow stockReportRow :listStockStoreRowsWithMissingProduct) {
                 ProductDTO productDTO = clientSender.getProduct(stockReportRow.getProductId());
+
                 productCRUDService.create(productDTO);
             }
             reportStockByStoreService.createListReports(listStockStoreRowsWithMissingProduct
