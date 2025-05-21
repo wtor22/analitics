@@ -34,4 +34,28 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("countClickQuestion").textContent = data.countCreateQuestions;
     }
 
+    // WEB SOCKETS
+    let socket = new SockJS('/ws');
+    let stompClient = Stomp.over(socket);
+
+    stompClient.connect({}, function (frame) {
+        stompClient.subscribe('/topic/messages', function (message) {
+            let msg = JSON.parse(message.body);
+            let el = document.createElement("li");
+            el.classList.add("badge","bg-primary","me-1")
+            el.textContent = msg.username + ": " + msg.text;
+            document.getElementById("messageList").appendChild(el);
+        });
+        stompClient.subscribe('/topic/request', function (message) {
+            document.getElementById("stockRequestList").innerHTML = "";
+            let data = JSON.parse(message.body);
+            data.forEach(str => {
+            let el = document.createElement("span");
+            el.classList.add("badge","bg-primary","me-1")
+            el.textContent =str;
+            document.getElementById("stockRequestList").appendChild(el);
+            });
+            document.getElementById("countClickSearch").textContent = data ? data.length : "0";
+        });
+    });
 });

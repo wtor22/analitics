@@ -9,11 +9,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet">
     <script th:src="@{/js/bootstrap.bundle.min.js}"></script>
-<!--    <script th:src="@{/js/createReport.js}"></script>-->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
     <script th:src="@{/js/bot-statistics.js}"></script>
 </head>
 <body>
-<div th:insert="~{fragments/fragments :: logo}" class="position-logo"></div>
+<div class="d-flex">
+    <div class="col-auto">
+        <div th:insert="~{fragments/fragments :: logo-default}" ></div>
+    </div>
+    <div class="col-auto ms-auto d-flex align-items-center">
+        <div th:insert="~{fragments/fragments :: navbar}"></div>
+    </div>
+</div>
 
 <div class="container">
     <h1 class="mb-5">Статистика Телеграмм Бота</h1>
@@ -42,6 +50,12 @@
             </div>
         </div>
         <div class="col-12 col-xl-8 p-1">
+            <div class="color-box p-3 mb-3">
+                <h6 class="selector-date px-0 fw-semibold">Запросы остатков за сегодня</h6>
+                <div id="stockRequestList">
+                    <span th:each="request: ${statisticsResponses.requestsStockToday}" class="badge bg-primary me-1" th:text="${request}"></span>
+                </div>
+            </div>
             <div class="color-box p-3">
                 <h6 class="selector-date px-0 fw-semibold">Статистика по акциям</h6>
                 <div th:each="actionStatistics: ${statisticsResponses.actionStatisticsList}" class="action-data p-1 d-flex flex-row mb-3">

@@ -26,7 +26,6 @@ public class BuilderBotResponse {
         }
 
         statisticsResponses.getActionStatisticsList().forEach(r -> {
-            log.error("PRINT ACTION ID " + r.getActionId());
             ActionDTO actionDTO = actionService.getDtoById(r.getActionId());
             r.setActionDTO(actionDTO);
         });

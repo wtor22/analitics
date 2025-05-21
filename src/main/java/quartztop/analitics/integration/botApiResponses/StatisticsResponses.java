@@ -15,4 +15,5 @@ public class StatisticsResponses {
     private long clickTabNextActionCount;
     private long clickTabActions;
     private List<ActionStatistics> actionStatisticsList;
+    private List<String> requestsStockToday;
 }

@@ -44,6 +44,12 @@ public class DefaultController {
         model.addAttribute("listOwners", ownerCRUDService.getListOwnerByUsedInReportTrue());
         return "index";
     }
+    @RequestMapping("/statistics")
+    public String statistics(Model model) {
+        model.addAttribute("groupedCategories", categoryCRUDService.getMapCategoryByPath());
+        model.addAttribute("listOwners", ownerCRUDService.getListOwnerByUsedInReportTrue());
+        return "statistics";
+    }
 
     @RequestMapping("/settings")
     public String settings(Model model) {
@@ -75,6 +81,7 @@ public class DefaultController {
         return "actions";
     }
 
+
     @RequestMapping("/bot-statistics")
     public String botStatistics(Model model) {
         StatisticsResponses statisticsResponses = builderStatisticsResponse.statisticsResponses();
@@ -82,7 +89,6 @@ public class DefaultController {
             model.addAttribute("errorMessage", "Сервис бота временно недоступен.");
         } else {
             model.addAttribute("statisticsResponses", statisticsResponses);
-            log.error("STATISTICS NOT NULL");
         }
 
         return "bot-statistics";

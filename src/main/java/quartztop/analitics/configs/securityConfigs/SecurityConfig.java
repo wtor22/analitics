@@ -40,7 +40,7 @@ public class SecurityConfig {
                                 .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
                 )
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/api/webhooks") // <--- ВОТ ТУТ ОТКЛЮЧАЕМ
+                        .ignoringRequestMatchers("/api/webhooks", "/api/v1/bot/message","/api/v1/bot/request") // <--- ВОТ ТУТ ОТКЛЮЧАЕМ
                 )
                 .formLogin(form -> form
                         .loginPage("/login")

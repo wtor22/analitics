@@ -3,9 +3,11 @@ package quartztop.analitics.controllers.restApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import quartztop.analitics.dtos.BotUsersDTO;
 import quartztop.analitics.dtos.actions.ActionDTO;
+import quartztop.analitics.integration.botApiResponses.TelegramMessageDto;
 import quartztop.analitics.responses.actions.TelegramActionDTO;
 import quartztop.analitics.integration.botApiResponses.BotClient;
 import quartztop.analitics.integration.botApiResponses.BuilderBotResponse;
@@ -28,6 +30,7 @@ public class BotController {
     private final ActionService actionService;
     private final BuilderBotResponse builderBotResponse;
     private final BotClient botClient;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping("/actions")
     public ResponseEntity<List<TelegramActionDTO>> actions(){
@@ -98,6 +101,17 @@ public class BotController {
     @GetMapping("/users/admins")
     public ResponseEntity<List<BotUsersDTO>> getListAdmins() {
         return ResponseEntity.ok(botClient.getListAdminsBot());
+    }
+
+    @PostMapping("/message")
+    public ResponseEntity<Void> getBotMessage(@RequestBody TelegramMessageDto messageDto) {
+        messagingTemplate.convertAndSend("/topic/messages", messageDto);
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping("/request")
+    public ResponseEntity<Void> getBotRequest(@RequestBody List<String> listRequest) {
+        messagingTemplate.convertAndSend("/topic/request", listRequest);
+        return ResponseEntity.ok().build();
     }
 
 }

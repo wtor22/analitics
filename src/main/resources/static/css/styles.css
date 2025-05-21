@@ -155,17 +155,36 @@ li.sortable-item {
     padding: 5px 10px;
     border: 1px solid #E9E4E9;
 }
+.btn.btn-xxl {
+    padding: 50px;;
+    border: 2px solid;
+    font-weight: bolder;
+    width: 100%;
+    max-width: 350px;
+    font-size: 24px;
+}
+.btn.btn-classic-outline {
+    color: #635872;
+    border-color: #635872;
+    transition: all .3s;
+}
+.wrap-menu .btn.btn-classic-outline:hover {
+    color: #DFDFF4;
+    border-color: #DFDFF4;
+}
 
 @media (max-width: 800px) {
     .logo {
-        width: 200px;
+        width: 300px;
         margin: 10px;
     }
     .logo h1{
-        font-size: 15px;
+        font-size: 29px;
         letter-spacing: 9.5px;
     }
-
+    .dropdown-toggle {
+        height: 100%;
+    }
     #imageButtonSelectedContainer li a {
       width: 100%;
       margin-bottom: 10px;
