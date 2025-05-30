@@ -13,9 +13,9 @@ import java.util.regex.Pattern;
 public class StockByStore {
     private Meta meta;
     private String name;
-    private int stock;
-    private int reserve;
-    private int inTransit;
+    private float stock;
+    private float reserve;
+    private float inTransit;
     private UUID productId;
     private UUID storeId;
 
