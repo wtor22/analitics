@@ -114,15 +114,24 @@ public interface SalesReportRepository extends JpaRepository<DemandPositionsEnti
             		AND d.moment BETWEEN :start AND :end
                     AND d.applicable = true
                     AND d.agent_id NOT IN (:excludedAgents)
+            ) ,
+            stock_summary AS (
+            	SELECT
+            		product_id,
+            		SUM(stock) AS stock
+            	FROM stock_by_store
+            	GROUP BY product_id
             )
             SELECT
                 rp.product_name,
             	rp.category_name,
-                SUM(rp.quantity) AS total_quantity
+                SUM(rp.quantity) AS total_quantity,
+                ss.stock AS stock
             FROM
                 real_positions rp
+            JOIN stock_summary ss ON rp.product_id = ss.product_id
             GROUP BY
-                rp.product_name, rp.category_name
+                rp.product_name, rp.category_name, ss.stock
             ORDER BY
                 rp.category_name, total_quantity DESC;
             """, nativeQuery = true)

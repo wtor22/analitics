@@ -25,6 +25,19 @@ public class CellStyles {
         CellStyle style = workbook.createCellStyle();
         style.setIndention(indent); // Устанавливаем уровень отступа
         style.setVerticalAlignment(VerticalAlignment.CENTER); // Вертикальное выравнивание
+
+        DataFormat format = workbook.createDataFormat();
+        style.setDataFormat(format.getFormat("0.00"));
+        return style;
+    }
+
+    // Cтиль для ячеек с рейтингом
+    static CellStyle createCellStyleRating(Workbook workbook) {
+
+        CellStyle style = workbook.createCellStyle();
+        style.setVerticalAlignment(VerticalAlignment.CENTER); // Вертикальное выравнивание
+        style.setAlignment(HorizontalAlignment.CENTER);
+
         return style;
     }
 

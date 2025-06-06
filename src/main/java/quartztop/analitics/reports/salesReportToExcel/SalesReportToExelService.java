@@ -28,7 +28,7 @@ public class SalesReportToExelService {
     private final String[] headersColumn = {"Месяц","Belenco","Stratos","Coante","Italstone","Materia","Fondovalle","Ascale", "Слэбов по организации", "Слэбов всего"};
     private final String[] headersCategoryColumn = {"Belenco","Stratos","Coante","Italstone","Materia","Fondovalle","Ascale"};
     private final String[] categoriesNames = {"Belenco","Stratos","Coante","Italstone","Materia","Fondovalle","Ascale"};
-    private final String[] ratingHeaderColumn = {"№", "Товар", "Кол-во проданных"};
+    private final String[] ratingHeaderColumn = {"№", "Товар", "Кол-во проданных", "Остаток на складах"};
 
     public Workbook createExcelBookReportRatingProducts(Integer year) {
 
@@ -137,15 +137,15 @@ public class SalesReportToExelService {
         String headerSheet =  categoryName + "   Рейтинг продаж за " +  periodToHeader;
 
         Row titleRow = sheet.createRow(rowIndex++);
-        sheet.addMergedRegion(new CellRangeAddress(titleRow.getRowNum(),titleRow.getRowNum(),0,7));
-        Cell titleCell = titleRow.createCell(0);
+        sheet.addMergedRegion(new CellRangeAddress(titleRow.getRowNum(),titleRow.getRowNum(),1,7));
+        Cell titleCell = titleRow.createCell(1);
         titleCell.setCellValue(headerSheet);
         titleCell.setCellStyle(headerStyle);
 
         Row rowColumnHeader = sheet.createRow(rowIndex++);
         for(int i = 0; i < ratingHeaderColumn.length; i++) {
-            Cell cell = rowColumnHeader.createCell(i);
-            cell.setCellValue(ratingHeaderColumn[i] + " ");
+            Cell cell = rowColumnHeader.createCell(i + 1);
+            cell.setCellValue(ratingHeaderColumn[i]);
             cell.setCellStyle(subHeaderStyle);
         }
 
@@ -155,21 +155,32 @@ public class SalesReportToExelService {
             if (!ratingProductReportDTO.getCategoryName().contains(categoryName)) continue;
 
             Row dataRow = sheet.createRow(rowIndex ++);
-            Cell ratingCell = dataRow.createCell(0);
+
+            Cell ratingCell = dataRow.createCell(1);
             ratingCell.setCellValue(rating++);
-            ratingCell.setCellStyle(cellStyle);
+            ratingCell.setCellStyle(CellStyles.createCellStyleRating(workbook));
 
-            Cell productNameCell = dataRow.createCell(1);
+            Cell productNameCell = dataRow.createCell(2);
             productNameCell.setCellValue(ratingProductReportDTO.getProductName());
-            ratingCell.setCellStyle(cellStyle);
+            productNameCell.setCellStyle(cellStyle);
 
-            Cell dataCell = dataRow.createCell(2);
+            Cell dataCell = dataRow.createCell(3);
             dataCell.setCellValue(ratingProductReportDTO.getTotalQuantity());
-            ratingCell.setCellStyle(cellStyle);
+            dataCell.setCellStyle(cellStyle);
+
+            Cell dataStock = dataRow.createCell(4);
+
+            dataStock.setCellValue(ratingProductReportDTO.getStock());
+            dataStock.setCellStyle(cellStyle);
+
         }
         for (int i = 0; i <= ratingHeaderColumn.length; i++) {
             sheet.autoSizeColumn(i);
         }
+
+        // Устанавливаю ширину колонок
+        sheet.setColumnWidth(0, 2 * 256);
+        sheet.setColumnWidth(1, 5 * 256);
     }
 
     private void createSheetPerOrgWithSum(Workbook workbook, String org, String periodToHeader, List<SalesReportDTO> listReportDTO) {
@@ -219,7 +230,7 @@ public class SalesReportToExelService {
             Cell underQuantity = rowUnderColumnHeader.createCell(indexUnderCol ++);
             underQuantity.setCellValue("  Кол-во");
             Cell underSum = rowUnderColumnHeader.createCell(indexUnderCol ++);
-            underSum.setCellValue("  Стоимость");
+            underSum.setCellValue("Рублей");
             indexColl = indexColl + 1;
             underQuantity.setCellStyle(subHeaderStyle);
             underSum.setCellStyle(subHeaderStyle);
@@ -231,6 +242,15 @@ public class SalesReportToExelService {
         totalPerOrgTitleCell.setCellValue("Слэбов по организации");
         totalPerOrgTitleCell.setCellStyle(subHeaderStyle);
         mergedTotalPerOrgTitleCell.setCellStyle(subHeaderStyle);
+
+        sheet.addMergedRegion(new CellRangeAddress(rowColumnHeader.getRowNum(), rowUnderColumnHeader.getRowNum(), indexUnderCol, indexUnderCol));
+        Cell totalSumPerOrgTitleCell = rowColumnHeader.createCell(indexUnderCol);
+        Cell mergedTotalSumPerOrgTitleCell = rowUnderColumnHeader.createCell(indexUnderCol);
+        indexUnderCol++;
+        totalSumPerOrgTitleCell.setCellValue("Рублей по организации");
+        totalSumPerOrgTitleCell.setCellStyle(subHeaderStyle);
+        mergedTotalSumPerOrgTitleCell.setCellStyle(subHeaderStyle);
+
 
         sheet.addMergedRegion(new CellRangeAddress(rowColumnHeader.getRowNum(), rowUnderColumnHeader.getRowNum(), indexUnderCol, indexUnderCol));
         Cell totalTitleCell = rowColumnHeader.createCell(indexUnderCol);
@@ -254,7 +274,7 @@ public class SalesReportToExelService {
                 monthCell.setCellStyle(cellStyle);
             }
             Float[] data = entry.getValue();
-            for(int i = 0; i < data.length - 1; i += 2) {
+            for(int i = 0; i < data.length - 3; i += 2) {
                 float quantity = data[i] != null ? data[i] : 0;
                 float sum = data[i + 1] != null ? data[i + 1] : 0;
 
@@ -272,6 +292,26 @@ public class SalesReportToExelService {
                     dataSumCell.setCellStyle(moneyStyle);
                 }
             }
+            Cell dataRowCellQuantityPerMonthAndOrg = dataRow.createCell(indexUnderCol - 2);
+            dataRowCellQuantityPerMonthAndOrg.setCellValue(data[data.length - 3]);
+
+
+            Cell dataRowCellSumPerMonthAndOrg = dataRow.createCell(indexUnderCol - 1);
+            dataRowCellSumPerMonthAndOrg.setCellValue(data[data.length - 2]);
+
+
+            Cell dataRowCellQuantityPerMonth = dataRow.createCell(indexUnderCol );
+            dataRowCellQuantityPerMonth.setCellValue(data[data.length - 1]);
+
+            if(isTotalRow) {
+                dataRowCellQuantityPerMonthAndOrg.setCellStyle(totalStyle);
+                dataRowCellSumPerMonthAndOrg.setCellStyle(moneyTotalStyle);
+                dataRowCellQuantityPerMonth.setCellStyle(totalStyle);
+            } else {
+                dataRowCellQuantityPerMonthAndOrg.setCellStyle(cellStyle);
+                dataRowCellSumPerMonthAndOrg.setCellStyle(moneyStyle);
+                dataRowCellQuantityPerMonth.setCellStyle(cellStyle);
+            }
         }
 
         // Автоматическое выравнивание колонок
@@ -286,7 +326,8 @@ public class SalesReportToExelService {
         // Устанавливаю ширину колонок
         sheet.setColumnWidth(0, 2 * 256);
         sheet.setColumnWidth(1, 11 * 256);
-        sheet.setColumnWidth(indexUnderCol - 1, 14 * 256);
+        sheet.setColumnWidth(indexUnderCol - 2, 14 * 256);
+        sheet.setColumnWidth(indexUnderCol - 1, 16 * 256);
         sheet.setColumnWidth(indexUnderCol, 11 * 256);
     }
 
@@ -367,10 +408,11 @@ public class SalesReportToExelService {
 
         Map<String, Float[]> mapDataPerMonth = new LinkedHashMap<>();
 
-        Float[] dataTotal = new Float[headersCategoryColumn.length * 2 + 2];
+        Float[] dataTotal = new Float[headersCategoryColumn.length * 2 + 3];
         Arrays.fill(dataTotal,0.0f);
 
         float total = 0;
+        float totalSumPerOrg = 0;
         float totalPerOrg = 0;
 
         for(SalesReportDTO salesReportDTO: listReportDTO) {
@@ -387,7 +429,7 @@ public class SalesReportToExelService {
 
             Float[] dataPerMonth;
             if(!mapDataPerMonth.containsKey(monthName)) {
-                dataPerMonth = new Float[headersColumn.length * 2 + 2];
+                dataPerMonth = new Float[headersColumn.length * 2 + 3];
                 Arrays.fill(dataPerMonth, 0.0f);
                 dataPerMonth[dataPerMonth.length - 1] = count;
             } else {
@@ -401,8 +443,11 @@ public class SalesReportToExelService {
                 continue;
             }
 
-            dataPerMonth[dataPerMonth.length - 2] = dataPerMonth[dataPerMonth.length - 2] + count;
+
+            dataPerMonth[dataPerMonth.length - 2] = dataPerMonth[dataPerMonth.length - 2] + sum;
+            dataPerMonth[dataPerMonth.length - 3] = dataPerMonth[dataPerMonth.length - 3] + count;
             totalPerOrg = totalPerOrg + count;
+            totalSumPerOrg = totalSumPerOrg + sum;
 
             int indexData = -1;
             for (int i = 0; i < headersColumn.length; i++) {
@@ -421,7 +466,8 @@ public class SalesReportToExelService {
             mapDataPerMonth.put(monthName,dataPerMonth);
         }
         dataTotal[dataTotal.length - 1] = total;
-        dataTotal[dataTotal.length - 2] = totalPerOrg;
+        dataTotal[dataTotal.length - 2] = totalSumPerOrg;
+        dataTotal[dataTotal.length - 3] = totalPerOrg;
         mapDataPerMonth.put("Итого", dataTotal);
 
         return mapDataPerMonth;
