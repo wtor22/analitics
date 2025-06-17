@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import quartztop.analitics.reports.salesReportToExcel.ReportFromStock;
 import quartztop.analitics.reports.salesReportToExcel.SalesReportDTO;
 import quartztop.analitics.reports.salesReportToExcel.SalesReportToExelService;
+import quartztop.analitics.reports.salesReportToExcel.StockByStoreAndCategoryDTO;
 import quartztop.analitics.repositories.docsPositions.SalesReportRepository;
 import quartztop.analitics.repositories.organizationData.OrganizationRepository;
 
@@ -39,9 +41,21 @@ public class SalesReportController {
     private final SalesReportToExelService salesReportToExelService;
     private final SalesReportRepository salesReportRepository;
     private final OrganizationRepository organizationRepository;
+    private final ReportFromStock report;
+    private final ReportFromStock reportFromStock;
 
     @Value("${myapp.allowed-ip}")
     protected String allowedIp;
+
+    @GetMapping("/stock")
+    public ResponseEntity<List<StockByStoreAndCategoryDTO>> getReportStock(HttpServletRequest request) {
+
+
+
+        log.warn("START CONTROLLER");
+        return ResponseEntity.ok(report.getListDto());
+    }
+
 
     @GetMapping("/get")
     public ResponseEntity<List<SalesReportDTO>> getSalesReport() {
@@ -53,6 +67,31 @@ public class SalesReportController {
         endOfYear = LocalDate.of(year, 12, 31).atTime(23,59,59,999);
         List<UUID> orgIds = organizationRepository.findAllId();
         return ResponseEntity.ok(salesReportRepository.getSalesReport(startOfYear,endOfYear, orgIds));
+    }
+
+    @GetMapping("/stock/download")
+    public ResponseEntity<Resource> downloadStockReport(@RequestParam(required = false) Integer year,
+                                                         HttpServletRequest request) {
+
+        String remoteAddr =  request.getRemoteAddr();
+
+        if (!isIpAllowed(remoteAddr, allowedIp) && (!allowedIp.equals("0.0.0.0/0"))) {
+            log.warn("🚫 Доступ запрещён для IP: {}", remoteAddr);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+        Workbook workbook = reportFromStock.createExcelBookReportStockProducts();
+        Resource resource;
+        try {
+            resource = createExcelResource(workbook);
+        } catch (IOException e) {
+            log.error("Ошибка при создании ресурса: ", e);
+            return ResponseEntity.internalServerError().build();
+        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=filename"  + ".xlsx")
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+
     }
 
     @GetMapping("/rating/download")

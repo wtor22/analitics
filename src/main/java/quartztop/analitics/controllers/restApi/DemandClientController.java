@@ -35,7 +35,7 @@ public class DemandClientController {
     }
 
     @GetMapping
-    public ResponseEntity<String> getDemandListFromToday(@RequestParam LocalDate start, @RequestParam LocalDate end) {
+    public ResponseEntity<String> getDemandListForYesterday(@RequestParam LocalDate start, @RequestParam LocalDate end) {
         //log.error("Start controller");
         String response = demandHandler.downloadDemandsWithOffset(start, end);
         return ResponseEntity.ok(response);

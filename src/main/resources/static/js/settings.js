@@ -9,10 +9,38 @@ document.addEventListener("DOMContentLoaded", function () {
     const agentsUpdaterForm = document.getElementById("agents-updater");
     const stringAgentResponse = document.getElementById("agents-updater-response");
 
-        agentsUpdaterForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-            updaterAgents();
-        });
+    const productUpdaterForm = document.getElementById("product-updater");
+    const stringProductResponse = document.getElementById("product-updater-response");
+
+    productUpdaterForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        updaterProducts();
+    });
+
+    function updaterProducts() {
+        fetch('/api/v1/client/product/all' , {
+                method: 'GET',
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Ошибка обработки: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(data => {
+
+                stringProductResponse.innerHTML = data;
+                stringProductResponse.classList.remove("d-none");
+            })
+            .catch(error => {
+                stringProductResponse.textContent = `Ошибка: ${error.message}`;
+            });
+    }
+
+    agentsUpdaterForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        updaterAgents();
+    });
 
         // Обновляем контрагентов
         function updaterAgents() {

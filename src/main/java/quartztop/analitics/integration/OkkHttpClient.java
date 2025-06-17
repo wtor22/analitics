@@ -82,7 +82,7 @@ public class OkkHttpClient {
                 if(responseBody != null) {
                     try {
                         String stringBody = responseBody.string();
-                        //log.info(stringBody);
+                        //log.error(stringBody);
                         return objectMapper.readValue(stringBody, typeReference);
                     } finally {
                         responseBody.close();

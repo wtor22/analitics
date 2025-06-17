@@ -9,6 +9,8 @@ public class CellStyles {
     static CellStyle createTotalStyle(Workbook workbook) {
 
         CellStyle style = workbook.createCellStyle();
+        DataFormat format = workbook.createDataFormat();
+        style.setDataFormat(format.getFormat("0.00"));
         style.setBorderTop(BorderStyle.THIN);
         Font font = workbook.createFont();
         font.setBold(true); // Устанавливаем жирный шрифт

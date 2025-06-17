@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import quartztop.analitics.models.organizationData.CountriesEntity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +24,7 @@ public class BundleEntity {
     private String description;
     private String name;
     private String pathName; // Наименование группы, в которую входит Товар
+    private LocalDateTime updated; // Момент последнего обновления
 
     @OneToMany(mappedBy = "bundle", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BundleProduct> bundleProducts = new ArrayList<>();

@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import quartztop.analitics.dtos.products.BundleDTO;
 import quartztop.analitics.dtos.products.CategoryDTO;
+import quartztop.analitics.dtos.products.ProductDTO;
+import quartztop.analitics.handlers.BundleHandler;
+import quartztop.analitics.handlers.ProductHandler;
 import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
 import quartztop.analitics.responses.stock.categoryResponse.CategoryResponse;
 import quartztop.analitics.models.products.CategoryEntity;
@@ -21,10 +24,34 @@ import java.util.UUID;
 @Slf4j
 public class ProductClientController {
 
-    //private final OkHttpClientSender httpClientSender;
     private final MySkladClient httpClientSender;
     private final CategoryCRUDService categoryCRUDService;
+    private final ProductHandler productHandler;
+    private final BundleHandler bundleHandler;
 
+    @GetMapping("/all")
+    public ResponseEntity<String> updateAllProductAndBundle() {
+
+        if(productHandler.checkExecution()) return ResponseEntity.ok("Жди!!! Обновляются товары");
+        if(bundleHandler.checkExecution()) return ResponseEntity.ok("Жди!!! Обновляются комплекты");
+        String responseProduct = productHandler.downloadProductsWithOffset();
+        String responseBundle = bundleHandler.downloadBundlesWithOffset();
+        String response = responseProduct + "<br>" + responseBundle;
+        return ResponseEntity.ok(response);
+    }
+
+
+    // Получаем все продукты из МС
+    @GetMapping
+    public ResponseEntity<String> getProductsList() {
+        String response = productHandler.downloadProductsWithOffset();
+        return ResponseEntity.ok(response);
+    }
+    @GetMapping("/bundle")
+    public ResponseEntity<String> getBundleList() {
+        String response = bundleHandler.downloadBundlesWithOffset();
+        return ResponseEntity.ok(response);
+    }
     // Ничего не сохраняет в БД. Чисто для теста
     @GetMapping("/bundle/{id}")
     public ResponseEntity<BundleDTO> bundleById(@PathVariable UUID id) {

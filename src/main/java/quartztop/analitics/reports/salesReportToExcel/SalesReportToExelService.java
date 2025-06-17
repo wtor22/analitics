@@ -25,9 +25,9 @@ public class SalesReportToExelService {
     private final SalesReportRepository salesReportRepository;
     private final OrganizationRepository organizationRepository;
 
-    private final String[] headersColumn = {"Месяц","Belenco","Stratos","Coante","Italstone","Materia","Fondovalle","Ascale", "Слэбов по организации", "Слэбов всего"};
-    private final String[] headersCategoryColumn = {"Belenco","Stratos","Coante","Italstone","Materia","Fondovalle","Ascale"};
-    private final String[] categoriesNames = {"Belenco","Stratos","Coante","Italstone","Materia","Fondovalle","Ascale"};
+    private final String[] headersColumn = {"Месяц","Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","Ascale","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL", "Слэбов по компании", "Слэбов всего"};
+    private final String[] headersCategoryColumn = {"Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","Ascale","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL"};
+    private final String[] categoriesNames = {"Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","Ascale","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL"};
     private final String[] ratingHeaderColumn = {"№", "Товар", "Кол-во проданных", "Остаток на складах"};
 
     public Workbook createExcelBookReportRatingProducts(Integer year) {
@@ -119,7 +119,6 @@ public class SalesReportToExelService {
             }
             createSheetPerOrg(workbook, org, periodToHeader, listReportDTO);
         }
-
         // передаем org null --- значит отчет по категориям без учета организации
         createSheetPerOrg(workbook, null, periodToHeader, listReportDTO);
         return workbook;
@@ -239,7 +238,7 @@ public class SalesReportToExelService {
         Cell totalPerOrgTitleCell = rowColumnHeader.createCell(indexUnderCol);
         Cell mergedTotalPerOrgTitleCell = rowUnderColumnHeader.createCell(indexUnderCol);
         indexUnderCol++;
-        totalPerOrgTitleCell.setCellValue("Слэбов по организации");
+        totalPerOrgTitleCell.setCellValue("Слэбов по компании");
         totalPerOrgTitleCell.setCellStyle(subHeaderStyle);
         mergedTotalPerOrgTitleCell.setCellStyle(subHeaderStyle);
 
@@ -247,10 +246,9 @@ public class SalesReportToExelService {
         Cell totalSumPerOrgTitleCell = rowColumnHeader.createCell(indexUnderCol);
         Cell mergedTotalSumPerOrgTitleCell = rowUnderColumnHeader.createCell(indexUnderCol);
         indexUnderCol++;
-        totalSumPerOrgTitleCell.setCellValue("Рублей по организации");
+        totalSumPerOrgTitleCell.setCellValue("Рублей по компании");
         totalSumPerOrgTitleCell.setCellStyle(subHeaderStyle);
         mergedTotalSumPerOrgTitleCell.setCellStyle(subHeaderStyle);
-
 
         sheet.addMergedRegion(new CellRangeAddress(rowColumnHeader.getRowNum(), rowUnderColumnHeader.getRowNum(), indexUnderCol, indexUnderCol));
         Cell totalTitleCell = rowColumnHeader.createCell(indexUnderCol);
@@ -295,10 +293,8 @@ public class SalesReportToExelService {
             Cell dataRowCellQuantityPerMonthAndOrg = dataRow.createCell(indexUnderCol - 2);
             dataRowCellQuantityPerMonthAndOrg.setCellValue(data[data.length - 3]);
 
-
             Cell dataRowCellSumPerMonthAndOrg = dataRow.createCell(indexUnderCol - 1);
             dataRowCellSumPerMonthAndOrg.setCellValue(data[data.length - 2]);
-
 
             Cell dataRowCellQuantityPerMonth = dataRow.createCell(indexUnderCol );
             dataRowCellQuantityPerMonth.setCellValue(data[data.length - 1]);
@@ -394,14 +390,16 @@ public class SalesReportToExelService {
         }
         // Автоматическое выравнивание колонок
         for (int i = 1; i <= headersColumn.length; i++) {
-            sheet.autoSizeColumn(i);
+            //sheet.autoSizeColumn(i);
+            sheet.setColumnWidth(i, 12 * 256);
         }
 
         // Устанавливаю ширину колонок
         sheet.setColumnWidth(0, 2 * 256);
-        sheet.setColumnWidth(1, 11 * 256);
-        sheet.setColumnWidth(headersColumn.length - 1, 14 * 256);
-        sheet.setColumnWidth(headersColumn.length , 11 * 256);
+//        sheet.setColumnWidth(1, 11 * 256);
+//        sheet.setColumnWidth(1, 13 * 256);
+        //sheet.setColumnWidth(headersColumn.length - 1, 14 * 256);
+        //sheet.setColumnWidth(headersColumn.length , 11 * 256);
     }
 
     private Map<String, Float[]> getMapDataPerMonthWithSum(List<SalesReportDTO> listReportDTO,String[] headersColumn, String organization) {
@@ -549,11 +547,4 @@ public class SalesReportToExelService {
         }
         return periodToHeader;
     }
-
-
-
-
-
-
-
 }

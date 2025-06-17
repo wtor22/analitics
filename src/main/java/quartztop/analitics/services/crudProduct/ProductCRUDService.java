@@ -3,6 +3,7 @@ package quartztop.analitics.services.crudProduct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import quartztop.analitics.dtos.organizationData.CountriesDTO;
 import quartztop.analitics.dtos.products.CategoryDTO;
 import quartztop.analitics.dtos.products.ProductDTO;
@@ -12,6 +13,7 @@ import quartztop.analitics.models.products.ProductsEntity;
 import quartztop.analitics.repositories.product.ProductRepository;
 import quartztop.analitics.services.crudOrganization.CountriesCRUDService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,6 +29,7 @@ public class ProductCRUDService {
     private final CountriesCRUDService countriesCRUDService;
     private final ProductAttributeService productAttributeService;
 
+    @Transactional
     public ProductsEntity create(ProductDTO productDTO) {
 
         ProductsEntity productsEntity = mapToEntity(productDTO);
@@ -45,6 +48,32 @@ public class ProductCRUDService {
             log.error("Category FOR product {} IS NULL", productDTO.getArticle());
         }
         return productRepository.save(productsEntity);
+    }
+
+    public int updateOrCreateListProducts(List<ProductDTO> productDTOList) {
+
+        List<ProductsEntity> productsEntityList = new ArrayList<>();
+        for(ProductDTO productDTO : productDTOList) {
+            ProductsEntity productsEntity = mapToEntity(productDTO);
+
+            productAttributeService.addAttributesToProduct(productsEntity, productDTO.getAttributes());
+
+            if (productDTO.getCountry() != null ) {
+                setCountry(productsEntity, productDTO.getCountry());
+            } else {
+                log.error("Country FOR product {} IS NULL", productDTO.getArticle());
+            }
+
+            if (productDTO.getCategoryDTO() != null) {
+                setCategory(productsEntity, productDTO.getCategoryDTO());
+            } else {
+                log.error("Category FOR product {} IS NULL", productDTO.getArticle());
+            }
+
+            productsEntityList.add(productsEntity);
+        }
+        productRepository.saveAll(productsEntityList);
+        return productDTOList.size();
     }
 
     private void setCategory(ProductsEntity productsEntity, CategoryDTO categoryDTO) {
@@ -94,6 +123,7 @@ public class ProductCRUDService {
         productDTO.setName(product.getName());
         productDTO.setDescription(product.getDescription());
         productDTO.setPathName(product.getPathName());
+        productDTO.setUpdated(product.getUpdated());
 
         return productDTO;
     }
@@ -107,6 +137,7 @@ public class ProductCRUDService {
         productsEntity.setName(product.getName());
         productsEntity.setDescription(product.getDescription());
         productsEntity.setPathName(product.getPathName());
+        productsEntity.setUpdated(product.getUpdated());
 
         return productsEntity;
     }

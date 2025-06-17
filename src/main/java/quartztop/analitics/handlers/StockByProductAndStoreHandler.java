@@ -100,6 +100,11 @@ public class StockByProductAndStoreHandler {
 
         for (StockByProductResponse stockByProductResponse :listStockByProductResponse) {
             String categoryName = stockByProductResponse.getCategory();
+
+            if(categoryName.equals("CALISCO (Турция)") || categoryName.equals("Casablanca (Въетнам)") ||
+                    categoryName.equals("GUIDONI (Испания)") || categoryName.equals("Strong Quartz (Китай)") || categoryName.equals("SHANGHAI CSC NEW MATERIAL"))
+                categoryName = "Stratos";
+
             mapCategoryResponse.computeIfAbsent(categoryName, k -> new ArrayList<>()).add(stockByProductResponse);
         }
 

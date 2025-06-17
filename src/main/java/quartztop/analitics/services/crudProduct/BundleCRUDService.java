@@ -9,6 +9,8 @@ import quartztop.analitics.dtos.products.BundleDTO;
 import quartztop.analitics.dtos.products.ProductDTO;
 import quartztop.analitics.models.organizationData.CountriesEntity;
 import quartztop.analitics.models.products.BundleEntity;
+import quartztop.analitics.models.products.BundleProduct;
+import quartztop.analitics.models.products.BundleProductId;
 import quartztop.analitics.models.products.ProductsEntity;
 import quartztop.analitics.repositories.product.BundleRepository;
 import quartztop.analitics.services.crudOrganization.CountriesCRUDService;
@@ -37,8 +39,41 @@ public class BundleCRUDService {
         if (!bundleDTO.getProductDTOList().isEmpty()) {
             setListProducts(bundleEntity, bundleDTO.getProductDTOList());
         }
-
         return bundleRepository.save(bundleEntity);
+    }
+
+    public void updateOrCreateBundleList(List<BundleDTO> bundleDTOS) {
+
+        List<BundleEntity> bundleEntities = new ArrayList<>();
+
+        for(BundleDTO bundleDTO : bundleDTOS) {
+            Optional<BundleEntity> optionalBundleEntity = bundleRepository.findById(bundleDTO.getId());
+            BundleEntity bundleEntity;
+
+            if (optionalBundleEntity.isEmpty()) {
+                bundleEntity = mapToEntity(bundleDTO);
+            } else {
+                bundleEntity = optionalBundleEntity.get();
+                bundleEntity.setUpdated(bundleDTO.getUpdated());
+                bundleEntity.setName(bundleDTO.getName());
+                bundleEntity.setDescription(bundleDTO.getDescription());
+                bundleEntity.setCode(bundleDTO.getCode());
+                bundleEntity.setArticle(bundleDTO.getArticle());
+                bundleEntity.setPathName(bundleDTO.getPathName());
+            }
+
+            if (bundleDTO.getCountry() != null ) {
+                setCountry(bundleEntity, bundleDTO.getCountry());
+            } else {
+                log.error("Country FOR product {} IS NULL", bundleDTO.getArticle());
+            }
+            if (!bundleDTO.getProductDTOList().isEmpty()) {
+                setListProducts(bundleEntity, bundleDTO.getProductDTOList());
+            }
+            bundleEntities.add(bundleEntity);
+        }
+
+        bundleRepository.saveAll(bundleEntities);
     }
     public Optional<BundleEntity> getOptionalEntity(BundleDTO bundleDTO) {
         return bundleRepository.findById(bundleDTO.getId());
@@ -47,10 +82,33 @@ public class BundleCRUDService {
     private void setListProducts(BundleEntity bundleEntity, List<ProductDTO> productDTOList) {
         for(ProductDTO productDTO: productDTOList) {
             Optional<ProductsEntity> optionalProductsEntity = productCRUDService.getOptionalEntity(productDTO);
-            if (optionalProductsEntity.isEmpty()) {
-                bundleEntity.addProduct(productCRUDService.create(productDTO), productDTO.getQuantity());
+
+            ProductsEntity productEntity;
+
+            productEntity = optionalProductsEntity.orElseGet(() -> productCRUDService.create(productDTO));
+
+            // Проверяем, есть ли уже BundleProduct с этим продуктом
+            Optional<BundleProduct> existingBundleProduct = bundleEntity.getBundleProducts().stream()
+                    .filter(bp -> bp.getProduct().getId().equals(productEntity.getId()))
+                    .findFirst();
+
+            if (existingBundleProduct.isPresent()) {
+                // Обновляем количество
+                existingBundleProduct.get().setQuantity(productDTO.getQuantity());
             } else {
-                bundleEntity.addProduct(optionalProductsEntity.get(), productDTO.getQuantity());
+                // Создаем новый связанный BundleProduct
+                BundleProduct newBundleProduct = new BundleProduct();
+                newBundleProduct.setBundle(bundleEntity);
+                newBundleProduct.setProduct(productEntity);
+                newBundleProduct.setQuantity(productDTO.getQuantity());
+
+                // Устанавливаем composite id
+                BundleProductId id = new BundleProductId();
+                id.setBundleId(bundleEntity.getId());
+                id.setProductId(productEntity.getId());
+                newBundleProduct.setId(id);
+
+                bundleEntity.getBundleProducts().add(newBundleProduct);
             }
         }
     }
@@ -78,6 +136,8 @@ public class BundleCRUDService {
         bundleEntity.setName(bundle.getName());
         bundleEntity.setDescription(bundle.getDescription());
         bundleEntity.setPathName(bundle.getPathName());
+        bundleEntity.setUpdated(bundle.getUpdated());
+
         return bundleEntity;
     }
 
@@ -90,6 +150,9 @@ public class BundleCRUDService {
         bundleDTO.setName(bundle.getName());
         bundleDTO.setDescription(bundle.getDescription());
         bundleDTO.setPathName(bundle.getPathName());
+        bundleDTO.setUpdated(bundle.getUpdated());
         return bundleDTO;
     }
+
+
 }

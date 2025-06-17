@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends JpaRepository<ProductsEntity, UUID> {
+public interface ProductRepository extends JpaRepository<ProductsEntity, UUID>, ProductRepositoryCustom {
 
     @Query("SELECT id FROM ProductsEntity WHERE id IN :ids")
     List<UUID> findExistingIds(@Param("ids") List<UUID> ids);

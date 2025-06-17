@@ -66,12 +66,7 @@ public class ReportStockByStoreService {
     }
 
     private StockByStoreEntity getEntity(StockByStore stockByStore) {
-        StockByStoreEntity reportStockByStoreEntity = mapToEntity(stockByStore);
-
-//        Optional<StoreEntity> optionalStoreEntity = storeCRUDService
-//                .getOptionalEntityById(stockByStore.getStoreId());
-//        optionalStoreEntity.ifPresent(reportStockByStoreEntity::setStoreEntity);
-        return reportStockByStoreEntity;
+        return mapToEntity(stockByStore);
     }
 
     public StockByStoreEntity mapToEntity(StockByStore stockByStore) {

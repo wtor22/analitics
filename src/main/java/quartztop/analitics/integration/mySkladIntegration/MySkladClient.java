@@ -11,7 +11,9 @@ import quartztop.analitics.dtos.docs.DemandWrapperDTO;
 import quartztop.analitics.dtos.organizationData.store.StoreDto;
 import quartztop.analitics.dtos.organizationData.store.StoreWrapper;
 import quartztop.analitics.dtos.products.BundleDTO;
+import quartztop.analitics.dtos.products.BundleWrapperDto;
 import quartztop.analitics.dtos.products.ProductDTO;
+import quartztop.analitics.dtos.products.ProductWrapperDto;
 import quartztop.analitics.dtos.reports.ReportStockByStoreWrapper;
 import quartztop.analitics.dtos.reports.StockReportRow;
 import quartztop.analitics.integration.OkkHttpClient;
@@ -53,6 +55,24 @@ public class MySkladClient extends OkkHttpClient {
                 .addHeader("Authorization",token)
                 .build();
         return processResponse(request, new TypeReference<>(){});
+    }
+
+    public List<ProductDTO> getListProducts(String offset, int limit) {
+        Request request = new Request.Builder()
+                .url(baseUrl + "entity/product/" + expandsProduct + "&limit=" + limit + "&offset=" + offset)
+                .addHeader("Authorization",token)
+                .build();
+        ProductWrapperDto productWrapperDto = processResponse(request, new TypeReference<>() {});
+        return productWrapperDto.getRows();
+    }
+
+    public List<BundleDTO> getListBundle(String offset, int limit) {
+        Request request = new Request.Builder()
+                .url(baseUrl + "entity/bundle/" + expandsBundle + "&limit=" + limit + "&offset=" + offset)
+                .addHeader("Authorization",token)
+                .build();
+        BundleWrapperDto bundleWrapperDto = processResponse(request, new TypeReference<>() {});
+        return bundleWrapperDto.getRows();
     }
     public AgentDTO getAgent(String id) {
 
@@ -106,8 +126,8 @@ public class MySkladClient extends OkkHttpClient {
                 .build();
         AgentWrapper agentWrapper =  processResponse(request, new TypeReference<>() {});
         return agentWrapper.getRows();
-
     }
+
     public List<StoreDto> getListStoreDto() {
         Request request = new Request.Builder()
                 .url(baseUrl + "entity/store")

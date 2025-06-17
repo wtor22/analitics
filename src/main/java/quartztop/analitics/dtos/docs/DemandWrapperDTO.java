@@ -1,6 +1,5 @@
 package quartztop.analitics.dtos.docs;
 
-import quartztop.analitics.dtos.docs.DemandDTO;
 
 import java.util.List;
 

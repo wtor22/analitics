@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import quartztop.analitics.models.reports.StockByStoreEntity;
+import quartztop.analitics.reports.salesReportToExcel.StockByStoreAndCategoryDTO;
 
 import java.util.List;
 
@@ -21,4 +22,11 @@ public interface ReportsStockByStoreRepository extends JpaRepository<StockByStor
             "AND st.orderInBotIndex > 0 " +
             "ORDER BY st.orderInBotIndex ASC")
     List<StockByStoreEntity> getStockReportsBySearch(@Param("search") String search);
+
+    @Query("SELECT st.name AS storeName, c.name AS categoryName, SUM(s.stock) AS stock FROM StockByStoreEntity s " +
+            "JOIN s.productsEntity p " +
+            "JOIN s.storeEntity st " +
+            "JOIN p.categoryEntity c " +
+            "GROUP BY st.name, c.name")
+    List<StockByStoreAndCategoryDTO> getStockReportsGroupByStoreAndCategory();
 }

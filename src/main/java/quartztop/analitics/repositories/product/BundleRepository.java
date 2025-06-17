@@ -7,5 +7,5 @@ import quartztop.analitics.models.products.BundleEntity;
 import java.util.UUID;
 
 @Repository
-public interface BundleRepository extends JpaRepository<BundleEntity, UUID> {
+public interface BundleRepository extends JpaRepository<BundleEntity, UUID>, BundleRepositoryCustom{
 }
