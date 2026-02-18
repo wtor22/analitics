@@ -25,12 +25,22 @@ public class SalesReportToExelService {
     private final SalesReportRepository salesReportRepository;
     private final OrganizationRepository organizationRepository;
 
-    private final String[] headersColumn = {"Месяц","Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","Ascale","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL", "Слэбов по компании", "Слэбов всего"};
-    private final String[] headersCategoryColumn = {"Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","Ascale","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL"};
-    private final String[] categoriesNames = {"Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","Ascale","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL"};
+    // Для Отчета главного Количества по организациям
+    private final String[] headersColumnGeneral = {"Месяц","Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","NOVA STONE","LE STONE","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL", "Слэбов по компании", "Слэбов всего"};
+    private final String[] headersColumnInterStone = {"Месяц","AVANT", "CAESARSTONE", "NOBLLE", "АВАРУС","GRANDEX","NEOMARM", "Слэбов по компании", "Слэбов всего"};
+
+    // Для отчетов с сумами
+    private final String[] headersCategoryColumn = {"Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","NOVA STONE","LE STONE","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL"};
+    private final String[] headersCategoryColumnInterStone = {"AVANT", "CAESARSTONE", "NOBLLE", "АВАРУС","GRANDEX","NEOMARM"};
+    private final String[] categoriesNames = {"Belenco","Casablanca (Въетнам)","CALISCO (Турция)","Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","NOVA STONE","LE STONE","GUIDONI (Испания)","SHANGHAI CSC NEW MATERIAL"};
+
     private final String[] ratingHeaderColumn = {"№", "Товар", "Кол-во проданных", "Остаток на складах"};
 
-    public Workbook createExcelBookReportRatingProducts(Integer year) {
+    /**
+     *
+     * @param type Или general - основные поставщики или inter_stone ИнтерСтоун
+     */
+    public Workbook createExcelBookReportRatingProducts(Integer year, String type) {
 
         Workbook workbook = new XSSFWorkbook();
 
@@ -52,6 +62,11 @@ public class SalesReportToExelService {
         List<RatingProductReportDTO> listReportDTO =
                 salesReportRepository.getRatingProductReport(startOfYear, endOfYear, orgIds);
 
+        for(RatingProductReportDTO rating: listReportDTO) {
+            if(!rating.getProductName().equals("Idyma Polished 20/A") ) continue;
+            log.warn(rating.getCategoryName() + " / " + rating.getProductName() + rating.getStock());
+        }
+
         // Если список пустой
         if (listReportDTO.isEmpty()) {
             int rowIndex = 1; // Индекс первого ряда
@@ -65,6 +80,7 @@ public class SalesReportToExelService {
             return workbook;
         }
         String periodToHeader = endOfYear.getYear() + " год";
+        String[] categoriesNames = type.equals("general") ? headersCategoryColumn : headersCategoryColumnInterStone;
         for(String category: categoriesNames) {
             createSheetRatingPerCategory(workbook, category, periodToHeader, listReportDTO);
         }
@@ -72,7 +88,11 @@ public class SalesReportToExelService {
     }
 
 
-    public Workbook createExcelBookReportOrders(Integer year) {
+    /**
+     *
+     * @param type - Тип поставщика general основные inter_stone ИнтерСтоун
+     */
+    public Workbook createExcelBookReportOrders(Integer year, String type) {
 
         Workbook workbook = new XSSFWorkbook();
 
@@ -112,15 +132,15 @@ public class SalesReportToExelService {
         String periodToHeader = getPeriodAsString(listReportDTO);
 
         for(String org: organizations) {
-            if (org.toLowerCase().contains("кварцтоп")) {
+            if (org.toLowerCase().contains("кварцтоп") && type.equals("general")) {
                 // Кварцтоп отчет с суммами
                 createSheetPerOrgWithSum(workbook, org, periodToHeader, listReportDTO);
                 continue;
             }
-            createSheetPerOrg(workbook, org, periodToHeader, listReportDTO);
+            createSheetPerOrg(workbook, org, periodToHeader, listReportDTO, type.equals("general") ? headersColumnGeneral : headersColumnInterStone);
         }
         // передаем org null --- значит отчет по категориям без учета организации
-        createSheetPerOrg(workbook, null, periodToHeader, listReportDTO);
+        createSheetPerOrg(workbook, null, periodToHeader, listReportDTO, type.equals("general") ? headersColumnGeneral : headersColumnInterStone);
         return workbook;
     }
 
@@ -327,7 +347,7 @@ public class SalesReportToExelService {
         sheet.setColumnWidth(indexUnderCol, 11 * 256);
     }
 
-    private void createSheetPerOrg(Workbook workbook, String org, String periodToHeader, List<SalesReportDTO> listReportDTO) {
+    private void createSheetPerOrg(Workbook workbook, String org, String periodToHeader, List<SalesReportDTO> listReportDTO, String[] headers) {
 
         // Создаем стиль для ячеек
         CellStyle headerStyle = CellStyles.createHeaderCellStyle(workbook);
@@ -349,17 +369,17 @@ public class SalesReportToExelService {
         separatorRow.setHeightInPoints(5f);
 
         Row rowColumnHeader = sheet.createRow(rowIndex++);
-        int arrayHeaderLength = org == null ? headersColumn.length - 1 : headersColumn.length;
+        int arrayHeaderLength = org == null ? headers.length - 1 : headers.length;
         for(int i = 0; i < arrayHeaderLength; i++) {
             Cell cell = rowColumnHeader.createCell(i + 1);
-            cell.setCellValue(" " + headersColumn[i] + " ");
+            cell.setCellValue(" " + headers[i] + " ");
             if (org == null && i == arrayHeaderLength - 1) {
                 cell.setCellValue("Всего слэбов");
             }
             cell.setCellStyle(subHeaderStyle);
         }
 
-        Map<String, Float[]> mapDataPerMonth = getMapDataPerMonth(listReportDTO,headersColumn,org);
+        Map<String, Float[]> mapDataPerMonth = getMapDataPerMonth(listReportDTO, headers,org);
 
         for(Map.Entry<String, Float[]> entry: mapDataPerMonth.entrySet()) {
             boolean isTotalRow = entry.getKey().equals("Итого");
@@ -389,7 +409,7 @@ public class SalesReportToExelService {
             }
         }
         // Автоматическое выравнивание колонок
-        for (int i = 1; i <= headersColumn.length; i++) {
+        for (int i = 1; i <= headers.length; i++) {
             //sheet.autoSizeColumn(i);
             sheet.setColumnWidth(i, 12 * 256);
         }

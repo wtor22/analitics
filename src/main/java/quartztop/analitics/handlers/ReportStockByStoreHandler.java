@@ -7,14 +7,12 @@ import quartztop.analitics.dtos.organizationData.store.StoreDto;
 import quartztop.analitics.dtos.products.ProductDTO;
 import quartztop.analitics.dtos.reports.StockByStore;
 import quartztop.analitics.dtos.reports.StockReportRow;
-import quartztop.analitics.httpClient.OkHttpClientSender;
 import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
 import quartztop.analitics.models.organizationData.StoreEntity;
 import quartztop.analitics.services.crudOrganization.StoreCRUDService;
 import quartztop.analitics.services.crudProduct.ProductCRUDService;
 import quartztop.analitics.services.reports.ReportStockByStoreService;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,8 +36,8 @@ public class ReportStockByStoreHandler {
         Long startMiles = System.currentTimeMillis();
 
         if (isDoIt)  {
-            log.error("return ЖДИ!!! - Операция выполняется");
-            return "ЖДИ!!! - Операция выполняется: загружаются данные";
+            log.error("⏳ return ЖДИ!!! - Операция выполняется");
+            return "⏳ ЖДИ!!! - Операция выполняется: загружаются данные";
         }
         isDoIt = true;
         int offset = 0;
@@ -53,7 +51,7 @@ public class ReportStockByStoreHandler {
         List<StockReportRow> listStockStoreRowsWithMissingProduct = new ArrayList<>();
 
         do {
-            log.warn("OFFSET " + offset + " SIZE STOCK LIST " + sizeStockList + " COUNT DEMAND " + countOperationStock);
+            log.warn("\uD83D\uDEE0 OFFSET " + offset + " SIZE STOCK LIST " + sizeStockList + " COUNT DEMAND " + countOperationStock);
             String offsetToString = String.valueOf(offset);
             List<StockReportRow> stockByStoreRowList = clientSender.getListStockByStore(offsetToString);
 
@@ -84,7 +82,7 @@ public class ReportStockByStoreHandler {
             sizeStockList = stockByStoreRowList.size();
             countOperationStock = countOperationStock + sizeStockList;
             offset = offset + COUNT_POSITION_LIMIT;
-            log.warn("OPERATION CONTINUED - GETTED SIZE LIST " + stockByStoreRowList.size());
+            log.warn("\uD83D\uDEE0 OPERATION CONTINUED - GETTED SIZE LIST " + stockByStoreRowList.size());
         } while (sizeStockList == COUNT_POSITION_LIMIT);
         // Прохожу по списку позиций товаров которых нет в бд, получаю их, сохраняю в бд, и отправляю позиции в БД.
         if (!listStockStoreRowsWithMissingProduct.isEmpty()) {
@@ -111,6 +109,7 @@ public class ReportStockByStoreHandler {
             String sec = String.valueOf(executionTime) ;
             time = time.concat(sec).concat(" секунд");
         }
+        log.warn("✅ Обновление остатков завершено успешно , количество обработанных позиций: " + countOperationStock + " за " + time);
         return "Операция завершена успешно, Количество обработанных позиций остатков: " + countOperationStock + " за " + time;
     }
 

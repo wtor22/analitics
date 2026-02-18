@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const dateFromInput = document.getElementById("date-demand-start");
     const dateToInput = document.getElementById("date-demand-end");
     const stringResponse = document.getElementById("demands-updater-response");
+    const deleteButton = document.getElementById("demands-killer");
+    const deletingDemandsStringResponse = document.getElementById("demands-killer-response");
     const categoryContainer = document.getElementById("category-container");
     const ownersUpdaterForm = document.getElementById("owners-updater");
 
@@ -15,6 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
     productUpdaterForm.addEventListener("submit", function (event) {
         event.preventDefault();
         updaterProducts();
+    });
+
+    deleteButton.addEventListener("click", function () {
+        deleteAllDemands();
     });
 
     function updaterProducts() {
@@ -109,6 +115,31 @@ document.addEventListener("DOMContentLoaded", function () {
             .catch(error => console.error("Ошибка загрузки менеджеров:", error));
     }
 
+    function deleteAllDemands() {
+        deletingDemandsStringResponse.classList.add("d-none");
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content')
+        fetch(`/api/v1/client/demand/all-delete`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken,
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Ошибка обработки: ${response.status}`);
+            }
+            return response.text();
+        })
+        .then(data => {
+            deletingDemandsStringResponse.textContent = data;
+            deletingDemandsStringResponse.classList.remove("d-none");
+        })
+        .catch(error => {
+            stringResponse.textContent = `Ошибка: ${error.message}`;
+        });
+    }
+
     function loadDemands() {
         const dateStart = dateFromInput.value;
         const dateEnd = dateToInput.value;
@@ -131,7 +162,6 @@ document.addEventListener("DOMContentLoaded", function () {
             return response.text();
         })
         .then(data => {
-
             stringResponse.textContent = data;
             stringResponse.classList.remove("d-none");
         })

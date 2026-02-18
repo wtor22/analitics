@@ -42,6 +42,7 @@ public class BundleCRUDService {
         return bundleRepository.save(bundleEntity);
     }
 
+    @Transactional
     public void updateOrCreateBundleList(List<BundleDTO> bundleDTOS) {
 
         List<BundleEntity> bundleEntities = new ArrayList<>();

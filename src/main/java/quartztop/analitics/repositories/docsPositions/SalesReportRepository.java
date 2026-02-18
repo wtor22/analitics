@@ -126,10 +126,10 @@ public interface SalesReportRepository extends JpaRepository<DemandPositionsEnti
                 rp.product_name,
             	rp.category_name,
                 SUM(rp.quantity) AS total_quantity,
-                ss.stock AS stock
+                COALESCE(ss.stock, 0) AS stock
             FROM
                 real_positions rp
-            JOIN stock_summary ss ON rp.product_id = ss.product_id
+            LEFT JOIN stock_summary ss ON rp.product_id = ss.product_id
             GROUP BY
                 rp.product_name, rp.category_name, ss.stock
             ORDER BY

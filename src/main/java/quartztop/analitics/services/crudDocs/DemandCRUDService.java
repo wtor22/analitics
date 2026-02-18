@@ -102,6 +102,11 @@ public class DemandCRUDService {
         demandRepository.deleteById(id);
         log.info("Demand {} from {} was deleted", optionalDemandEntity.get().getName(), optionalDemandEntity.get().getMoment());
     }
+
+    public void deleteAllDemands() {
+        demandRepository.deleteAll();
+        log.info("All Demands was deleted");
+    }
     public LocalDateTime getMomentUpdateById(UUID id) {
         return demandRepository.findMomentById(id);
     }

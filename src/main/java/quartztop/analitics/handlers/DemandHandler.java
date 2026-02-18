@@ -67,8 +67,8 @@ public class DemandHandler {
     public String downloadDemandsWithOffset(LocalDate start, LocalDate end) {
 
         if (isDoIt)  {
-            log.error("return ЖДИ!!! - Операция выполняется");
-        return "ЖДИ!!! - Операция выполняется: загружаются данные за период с " + start + " по " + end;
+            log.error("⏳ ЖДИ!!! - Операция выполняется");
+        return "⏳ ЖДИ!!! - Операция выполняется: загружаются данные за период с " + start + " по " + end;
         }
         isDoIt = true;
         int offset = 0;
@@ -78,16 +78,17 @@ public class DemandHandler {
         LocalDateTime startPeriod = start.atStartOfDay();
         LocalDateTime endPeriod = end.atTime(23,59,59);
         do {
-            log.warn("OFFSET " + offset + " SIZE DEMANDLIST " + sizeDemandList + " COUNT DEMAND " + countOperationDemand);
+            log.warn("м OFFSET " + offset + " SIZE DEMANDLIST " + sizeDemandList + " COUNT DEMAND " + countOperationDemand);
             String offsetToString = String.valueOf(offset);
             List<DemandDTO> demandDTOList = clientSender.getListDemandsToDay(offsetToString, startPeriod, endPeriod);
             checkAndCreateDemands(demandDTOList);
             sizeDemandList = demandDTOList.size();
             countOperationDemand = countOperationDemand + sizeDemandList;
             offset = offset + 100;
-            log.warn("OPERATION CONTINUED - GETTED SIZE LIST " + demandDTOList.size());
+            log.warn("\uD83D\uDEE0 OPERATION CONTINUED - GETTED SIZE LIST " + demandDTOList.size());
         } while (sizeDemandList == 100);
         isDoIt = false;
+        log.warn("\uD83D\uDEE0 Операция завершена успешно, Количество обработанных отгрузок: " + countOperationDemand);
         return "Операция завершена успешно, Количество обработанных отгрузок: " + countOperationDemand;
     }
 

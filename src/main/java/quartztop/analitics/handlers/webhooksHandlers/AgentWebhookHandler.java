@@ -9,6 +9,7 @@ import quartztop.analitics.integration.mySkladIntegration.MySkladClient;
 import quartztop.analitics.services.counterparty.AgentCRUDService;
 
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,11 +26,11 @@ public class AgentWebhookHandler implements WebhookHandler{
 
     @Override
     @Async
-    public void handle(String id, Map<String, String> params) {
+    public void handle(UUID id, Map<String, String> params) {
         AgentDTO agentDTO = clientSender.getAgent(id);
 
-        log.warn("AGENT IS - " + agentDTO.getName());
+        log.warn("\uD83D\uDCBE AGENT IS - " + agentDTO.getName());
 
-        log.warn("AGENT SAVED " + agentCRUDService.create(agentDTO).getUpdated());
+        log.warn("\uD83D\uDCBE AGENT SAVED " + agentCRUDService.create(agentDTO).getUpdated());
     }
 }

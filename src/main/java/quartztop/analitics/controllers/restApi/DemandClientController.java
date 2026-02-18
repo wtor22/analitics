@@ -46,4 +46,12 @@ public class DemandClientController {
         demandCRUDService.deleteDemandById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/all-delete")
+    public ResponseEntity<String> deleteAllDemands(){
+        log.warn("🔥🔥🔥🔥🔥 START DELETE");
+        demandCRUDService.deleteAllDemands();
+        log.warn("🔥🔥🔥 END DELETE");
+        return ResponseEntity.ok("Все отгрузки удалены");
+    }
 }

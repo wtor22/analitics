@@ -1,12 +1,10 @@
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk
 
 # Устанавливаем шрифты + fontconfig
-RUN apt-get update && apt-get install -y fontconfig fonts-dejavu fonts-liberation \
-    && rm -rf /var/lib/apt/lists/* \
-
-
-# Обновляем кеш шрифтов (чтобы система их увидела)
-RUN fc-cache -fv
+RUN apt-get update \
+ && apt-get install -y fontconfig fonts-dejavu fonts-liberation \
+ && rm -rf /var/lib/apt/lists/* \
+ && fc-cache -fv
 
 WORKDIR /app
 COPY target/analitics-0.0.1-SNAPSHOT.jar app.jar

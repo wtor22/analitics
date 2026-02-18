@@ -49,10 +49,6 @@ public class SalesReportController {
 
     @GetMapping("/stock")
     public ResponseEntity<List<StockByStoreAndCategoryDTO>> getReportStock(HttpServletRequest request) {
-
-
-
-        log.warn("START CONTROLLER");
         return ResponseEntity.ok(report.getListDto());
     }
 
@@ -94,9 +90,15 @@ public class SalesReportController {
 
     }
 
+    /**
+     *
+     * @param year Год отчета
+     * @param type Тип отчета general основные поставщики inter_stone ИнтерСтоун
+     */
     @GetMapping("/rating/download")
     public ResponseEntity<Resource> downloadRatingReport(@RequestParam(required = false) Integer year,
-                                                   HttpServletRequest request) {
+                                                         @RequestParam(required = false) String type,
+                                                         HttpServletRequest request) {
 
         String remoteAddr =  request.getRemoteAddr();
 
@@ -105,7 +107,7 @@ public class SalesReportController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
-        Workbook workbook = salesReportToExelService.createExcelBookReportRatingProducts(year);
+        Workbook workbook = salesReportToExelService.createExcelBookReportRatingProducts(year, type);
         Resource resource;
         try {
             resource = createExcelResource(workbook);
@@ -120,8 +122,14 @@ public class SalesReportController {
 
     }
 
+    /**
+     *
+     * @param year Год отчета
+     * @param type Тип отчета general основные поставщики inter_stone ИнтерСтоун
+     */
     @GetMapping("/download")
     public ResponseEntity<Resource> downloadReport(@RequestParam(required = false) Integer year,
+                                                   @RequestParam(required = false) String type,
                                                    HttpServletRequest request) {
 
         String remoteAddr =  request.getRemoteAddr();
@@ -131,7 +139,7 @@ public class SalesReportController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
-        Workbook workbook = salesReportToExelService.createExcelBookReportOrders(year);
+        Workbook workbook = salesReportToExelService.createExcelBookReportOrders(year, type);
         Resource resource;
         try {
             resource = createExcelResource(workbook);

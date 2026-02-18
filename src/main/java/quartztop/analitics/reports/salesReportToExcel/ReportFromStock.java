@@ -13,21 +13,20 @@ import org.springframework.stereotype.Component;
 import quartztop.analitics.repositories.reports.ReportsStockByStoreRepository;
 import quartztop.analitics.services.reports.ReportStockByStoreService;
 
-import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.*;
 
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ReportFromStock {
+public class  ReportFromStock {
 
     private final ReportStockByStoreService reportStockByStoreService;
     private final ReportsStockByStoreRepository reportsStockByStoreRepository;
 
     private String[] storeToWrite;
     private final String[] categoriesNames = {"Belenco","Casablanca (Въетнам)","CALISCO (Турция)",
-            "Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","Ascale","GUIDONI (Испания)",
+            "Strong Quartz (Китай)","Coante","Italstone","Materia","Fondovalle","LE STONE","GUIDONI (Испания)",
             "SHANGHAI CSC NEW MATERIAL"};
     private String[] storeNames = {"Склад Минск","Склад Балашиха","СПБ Петробрас","Склад Краснодар"};
 

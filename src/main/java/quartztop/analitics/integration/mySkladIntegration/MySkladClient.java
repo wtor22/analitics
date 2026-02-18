@@ -74,7 +74,7 @@ public class MySkladClient extends OkkHttpClient {
         BundleWrapperDto bundleWrapperDto = processResponse(request, new TypeReference<>() {});
         return bundleWrapperDto.getRows();
     }
-    public AgentDTO getAgent(String id) {
+    public AgentDTO getAgent(UUID id) {
 
         Request request = new Request.Builder()
                 .url(baseUrl + "entity/counterparty/" + id + "?expand=owner")
